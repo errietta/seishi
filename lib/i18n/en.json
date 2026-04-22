@@ -1,0 +1,136 @@
+{
+  "home": {
+    "title": "SEISHI",
+    "subtitle": "presence",
+    "begin": "BEGIN",
+    "streakLabel": "day streak",
+    "lastScore": "last score",
+    "noStreak": "start your streak"
+  },
+  "modes": {
+    "title": "CHOOSE YOUR TRIAL",
+    "simple": {
+      "name": "SIMPLE",
+      "description": "Timer visible. Sound optional. Training wheels attached."
+    },
+    "raw": {
+      "name": "RAW",
+      "description": "No timer. No sound. Just you and the silence."
+    },
+    "spicy": {
+      "name": "SPICY",
+      "description": "You set the range. The app decides when you're done."
+    }
+  },
+  "config": {
+    "duration": "DURATION",
+    "durationMinutes": "minutes",
+    "range": "SET YOUR RANGE",
+    "rangeMin": "minimum",
+    "rangeMax": "maximum",
+    "sound": "AMBIENT SOUND",
+    "soundNone": "None",
+    "soundRain": "Rain",
+    "soundWhiteNoise": "White Noise",
+    "soundBinaural": "Binaural",
+    "begin": "BEGIN SESSION"
+  },
+  "session": {
+    "phaseIdle": "settle in",
+    "phaseActive": "breathe",
+    "phaseWinding": "almost there"
+  },
+  "scold": {
+    "resume": "I'M BACK, I SWEAR"
+  },
+  "complete": {
+    "title": "SESSION COMPLETE",
+    "score": "SCORE",
+    "concentration": "HOW FOCUSED WERE YOU?",
+    "concentrationHint": "be honest",
+    "continue": "CONTINUE",
+    "pickups": "pickups",
+    "streakUpdate": "streak updated"
+  },
+  "stats": {
+    "title": "RECORD",
+    "streak": "CURRENT STREAK",
+    "avgConcentration": "AVG CONCENTRATION",
+    "history": "SESSIONS",
+    "empty": "No sessions yet. Begin."
+  },
+  "settings": {
+    "title": "SETTINGS",
+    "tone": "SENSEI TONE",
+    "toneStrict": "Strict",
+    "toneEncouraging": "Encouraging",
+    "graceperiod": "STREAK GRACE PERIOD",
+    "graceperiodHint": "hours before midnight"
+  },
+  "messages": {
+    "strict": {
+      "pickup": [
+        "Really? REALLY?",
+        "Disgraceful.",
+        "The phone calls to you and you answer like a dog.",
+        "I expected nothing and you still disappointed me.",
+        "Pathetic.",
+        "Five seconds. That is all it took.",
+        "You were doing so well. Now you are not."
+      ],
+      "complete": [
+        "Acceptable. Do not celebrate.",
+        "You have done the bare minimum. Good.",
+        "Even a broken clock is right twice a day.",
+        "Fine. Go eat something.",
+        "I have seen worse. Barely.",
+        "You may go.",
+        "This will have to do."
+      ],
+      "streakBroken": [
+        "Streak lost. As expected.",
+        "The streak is dead. Begin again.",
+        "You had one job.",
+        "Disappointing but not surprising."
+      ],
+      "streakMilestone": [
+        "You persist. Fine.",
+        "Still here. I acknowledge this.",
+        "Consistency noted. Do not make it a personality.",
+        "The streak grows. So do my expectations."
+      ]
+    },
+    "encouraging": {
+      "pickup": [
+        "Hey, it happens. Come back.",
+        "The mind wanders. That's normal. Return.",
+        "You noticed. That's the practice.",
+        "No judgment. Just breathe.",
+        "It's okay. Start again.",
+        "Phones are designed to distract. You're fighting that. Come back.",
+        "One interruption doesn't ruin the session."
+      ],
+      "complete": [
+        "Beautiful. You showed up.",
+        "That took courage. Well done.",
+        "Every session counts. This one counted.",
+        "You did the hard thing. That's everything.",
+        "Look at you. Still here, still trying.",
+        "The fact you finished means something.",
+        "That was real practice. Be proud."
+      ],
+      "streakBroken": [
+        "Rest is part of the practice. Begin again.",
+        "Streaks end. New ones begin. Today.",
+        "It's okay. You know the way back.",
+        "Tomorrow is a new start."
+      ],
+      "streakMilestone": [
+        "Look how far you've come.",
+        "Consistency is the whole game. You're playing it.",
+        "This streak is real. You built it.",
+        "Day by day. That's how it works."
+      ]
+    }
+  }
+}
