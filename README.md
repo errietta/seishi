@@ -210,3 +210,11 @@ Make sure `babel.config.js` has `'react-native-reanimated/plugin'` listed last i
 ```bash
 npx expo start --clear
 ```
+
+
+*** Sound attribution
+
+Rain loop: https://freesound.org/people/unfa/sounds/177479/
+White noise: https://freesound.org/people/Timbre/sounds/843519/
+Singing bowl: https://www.imagefilm.berlin/ - https://freesound.org/people/imagefilm.berlin/sounds/763504/
+Gong: https://freesound.org/people/univ_lyon3/sounds/324548/

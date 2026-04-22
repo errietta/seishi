@@ -10,7 +10,7 @@ import ScoldOverlay from '../components/ScoldOverlay'
 import { useSessionStore, PUNISHMENT_SECONDS } from '../lib/store/sessionStore'
 import { useStreakStore } from '../lib/store/streakStore'
 import { createPickupDetector, type PickupCause } from '../lib/sensors/pickupDetector'
-import { playAmbient, stopAmbient } from '../lib/audio/ambientPlayer'
+import { playAmbient, stopAmbient, playGong } from '../lib/audio/ambientPlayer'
 import { getRandomMessage } from '../lib/i18n'
 import { colors, spacing, typography } from '../lib/theme'
 import type { SoundKey } from '../lib/audio/ambientPlayer'
@@ -41,6 +41,7 @@ export default function Session() {
     if (timerRef.current) clearInterval(timerRef.current)
     detector.current.stop()
     await stopAmbient()
+    if (session.gongOnComplete) await playGong()
     KeepAwake.deactivateKeepAwake(KEEP_AWAKE_TAG)
     if (originalBrightness.current !== null) {
       await Brightness.setBrightnessAsync(originalBrightness.current).catch(() => {})
@@ -91,7 +92,7 @@ export default function Session() {
 
   function handleResume() {
     setScoldVisible(false)
-    Brightness.setBrightnessAsync(0.05).catch(() => {})
+    Brightness.setBrightnessAsync(0.01).catch(() => {})
     session.resumeSession()
   }
 
@@ -103,7 +104,7 @@ export default function Session() {
       try {
         const current = await Brightness.getBrightnessAsync()
         if (active) originalBrightness.current = current
-        await Brightness.setBrightnessAsync(0.05)
+        await Brightness.setBrightnessAsync(0.01)
       } catch {}
       if (session.sound) {
         playAmbient(session.sound as SoundKey).catch(() => {})

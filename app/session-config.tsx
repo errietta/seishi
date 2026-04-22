@@ -13,7 +13,7 @@ import { colors, radius, spacing, typography } from '../lib/theme'
 const DURATIONS = [5, 10, 15, 20]
 const SPICY_MINS = [5, 7, 10, 12]
 const SPICY_MAXS = [10, 15, 20, 30]
-const SOUNDS = ['none', 'rain', 'whitenoise', 'binaural'] as const
+const SOUNDS = ['none', 'rain', 'whitenoise', 'singingbowl'] as const
 
 export default function SessionConfig() {
   const { t } = useTranslation()
@@ -26,12 +26,13 @@ export default function SessionConfig() {
   const [spicyMin, setSpicyMin] = useState(7)
   const [spicyMax, setSpicyMax] = useState(15)
   const [punishment, setPunishment] = useState<PunishmentMode>('none')
+  const [gong, setGong] = useState(false)
 
   const soundLabel = (key: string) => {
     if (key === 'none') return t('config.soundNone')
     if (key === 'rain') return t('config.soundRain')
     if (key === 'whitenoise') return t('config.soundWhiteNoise')
-    return t('config.soundBinaural')
+    return t('config.soundSingingBowl')
   }
 
   function begin() {
@@ -40,7 +41,7 @@ export default function SessionConfig() {
       : mode === 'spicy'
       ? (spicyMin + Math.floor(Math.random() * (spicyMax - spicyMin + 1))) * 60
       : duration * 60
-    startSession(mode as Mode, finalDuration, mode === 'simple' ? sound : null, punishment)
+    startSession(mode as Mode, finalDuration, mode === 'simple' ? sound : null, punishment, gong)
     router.replace('/session')
   }
 
@@ -147,6 +148,16 @@ export default function SessionConfig() {
                 danger={key !== 'none'}
               />
             ))}
+          </View>
+        </Card>
+
+        <Spacer size={spacing.md} />
+        <Card>
+          <Text style={[typography.caption]}>{t('config.gong')}</Text>
+          <Spacer size={spacing.md} />
+          <View style={styles.chipRow}>
+            <Chip label={t('config.gongOff')} active={!gong} onPress={() => setGong(false)} />
+            <Chip label={t('config.gongOn')} active={gong} onPress={() => setGong(true)} />
           </View>
         </Card>
 

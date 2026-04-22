@@ -15,7 +15,8 @@ interface SessionState {
   isRunning: boolean
   sound: string | null
   punishmentMode: PunishmentMode
-  startSession: (mode: Mode, duration: number, sound: string | null, punishment: PunishmentMode) => void
+  gongOnComplete: boolean
+  startSession: (mode: Mode, duration: number, sound: string | null, punishment: PunishmentMode, gong: boolean) => void
   pauseSession: () => void
   resumeSession: () => void
   endSession: () => void
@@ -37,9 +38,10 @@ export const useSessionStore = create<SessionState>((set) => ({
   isRunning: false,
   sound: null,
   punishmentMode: 'none',
+  gongOnComplete: false,
 
-  startSession: (mode, duration, sound, punishment) =>
-    set({ mode, duration, elapsed: 0, phase: 'active', pickups: 0, isRunning: true, sound, punishmentMode: punishment }),
+  startSession: (mode, duration, sound, punishment, gong) =>
+    set({ mode, duration, elapsed: 0, phase: 'active', pickups: 0, isRunning: true, sound, punishmentMode: punishment, gongOnComplete: gong }),
 
   pauseSession: () => set({ isRunning: false }),
 
@@ -68,5 +70,5 @@ export const useSessionStore = create<SessionState>((set) => ({
   resetTimer: () => set({ elapsed: 0, phase: 'active' }),
 
   reset: () =>
-    set({ mode: null, duration: 0, elapsed: 0, phase: 'idle', pickups: 0, isRunning: false, sound: null, punishmentMode: 'none' }),
+    set({ mode: null, duration: 0, elapsed: 0, phase: 'idle', pickups: 0, isRunning: false, sound: null, punishmentMode: 'none', gongOnComplete: false }),
 }))
