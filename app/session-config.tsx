@@ -7,6 +7,7 @@ import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Spacer from '../components/ui/Spacer'
 import { useSessionStore, type Mode, type PunishmentMode } from '../lib/store/sessionStore'
+import { useStreakStore } from '../lib/store/streakStore'
 import { colors, radius, spacing, typography } from '../lib/theme'
 
 const DURATIONS = [5, 10, 15, 20]
@@ -18,6 +19,7 @@ export default function SessionConfig() {
   const { t } = useTranslation()
   const { mode } = useLocalSearchParams<{ mode: Mode }>()
   const startSession = useSessionStore((s) => s.startSession)
+  const devMode = useStreakStore((s) => s.devMode)
 
   const [duration, setDuration] = useState(10)
   const [sound, setSound] = useState<string | null>(null)
@@ -33,10 +35,11 @@ export default function SessionConfig() {
   }
 
   function begin() {
-    const finalDuration =
-      mode === 'spicy'
-        ? (spicyMin + Math.floor(Math.random() * (spicyMax - spicyMin + 1))) * 60
-        : duration * 60
+    const finalDuration = devMode
+      ? 5
+      : mode === 'spicy'
+      ? (spicyMin + Math.floor(Math.random() * (spicyMax - spicyMin + 1))) * 60
+      : duration * 60
     startSession(mode as Mode, finalDuration, mode === 'simple' ? sound : null, punishment)
     router.replace('/session')
   }
@@ -194,7 +197,9 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
   },
   back: {
-    marginBottom: spacing.lg,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
+    alignSelf: 'flex-start',
   },
   chipRow: {
     flexDirection: 'row',

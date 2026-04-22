@@ -86,7 +86,9 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
   },
   back: {
-    marginBottom: spacing.lg,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
+    alignSelf: 'flex-start',
   },
   item: {
     marginBottom: spacing.sm,

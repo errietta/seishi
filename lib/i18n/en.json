@@ -1,7 +1,7 @@
 {
   "home": {
     "title": "SEISHI",
-    "subtitle": "presence",
+    "subtitle": "stillness",
     "begin": "BEGIN",
     "streakLabel": "day streak",
     "lastScore": "last score",
@@ -76,6 +76,15 @@
   },
   "messages": {
     "strict": {
+      "grace": [
+        "I bet you can't do this.",
+        "Your phone misses you already.",
+        "Let's see how long this lasts.",
+        "You'll give up. You always do.",
+        "Prove me wrong. You won't.",
+        "I've seen better commitment from houseplants.",
+        "This will go poorly for you."
+      ],
       "pickup": [
         "Really? REALLY?",
         "Disgraceful.",
@@ -120,6 +129,15 @@
       ]
     },
     "encouraging": {
+      "grace": [
+        "You've got this.",
+        "Everything else can wait.",
+        "You showed up. That already means something.",
+        "Breathe. You know how to do this.",
+        "This moment is yours.",
+        "Leave the world outside for a while.",
+        "Ten seconds. Just ten seconds."
+      ],
       "pickup": [
         "Hey, it happens. Come back.",
         "The mind wanders. That's normal. Return.",

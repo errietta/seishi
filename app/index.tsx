@@ -21,10 +21,10 @@ export default function Home() {
       <View style={styles.container}>
         {/* Top nav */}
         <View style={styles.topNav}>
-          <TouchableOpacity onPress={() => router.push('/stats')}>
+          <TouchableOpacity onPress={() => router.push('/stats')} style={styles.navButton}>
             <Text style={[typography.caption, { color: colors.muted }]}>RECORD</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/settings')}>
+          <TouchableOpacity onPress={() => router.push('/settings')} style={styles.navButton}>
             <Text style={[typography.caption, { color: colors.muted }]}>SETTINGS</Text>
           </TouchableOpacity>
         </View>
@@ -73,8 +73,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
+  },
+  navButton: {
+    padding: spacing.md,
   },
   titleBlock: {
     alignItems: 'center',

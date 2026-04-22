@@ -16,12 +16,15 @@ import { colors, spacing, typography } from '../lib/theme'
 import type { SoundKey } from '../lib/audio/ambientPlayer'
 
 const KEEP_AWAKE_TAG = 'session'
+const GRACE_SECONDS = 10
 
 export default function Session() {
   const { t } = useTranslation()
   const session = useSessionStore()
   const tone = useStreakStore((s) => s.tone)
 
+  const [graceRemaining, setGraceRemaining] = useState(GRACE_SECONDS)
+  const [graceMessage] = useState(() => getRandomMessage(tone, 'grace'))
   const [scoldVisible, setScoldVisible] = useState(false)
   const [scoldMessage, setScoldMessage] = useState('')
   const [penaltyLabel, setPenaltyLabel] = useState<string | undefined>()
@@ -63,11 +66,9 @@ export default function Session() {
         Brightness.setBrightnessAsync(originalBrightness.current).catch(() => {})
       }
 
-      // Pick message pool — app-switch gets its own angrier pool
       const messageKey = isDeliberate ? 'appSwitch' : 'pickup'
       setScoldMessage(getRandomMessage(tone, messageKey))
 
-      // Apply punishment for deliberate app-switch
       let label: string | undefined
       if (isDeliberate) {
         const punishment = session.punishmentMode
@@ -98,29 +99,38 @@ export default function Session() {
     let active = true
 
     async function setup() {
-      KeepAwake.activateKeepAwake(KEEP_AWAKE_TAG)
-
+      await KeepAwake.activateKeepAwakeAsync(KEEP_AWAKE_TAG)
       try {
         const current = await Brightness.getBrightnessAsync()
         if (active) originalBrightness.current = current
         await Brightness.setBrightnessAsync(0.05)
       } catch {}
-
       if (session.sound) {
         playAmbient(session.sound as SoundKey).catch(() => {})
       }
-
-      detector.current.start(showScold)
     }
 
     setup()
 
-    timerRef.current = setInterval(() => {
-      session.tickElapsed()
+    // Grace period — counts down before pickup detection starts
+    const graceInterval = setInterval(() => {
+      setGraceRemaining((prev) => {
+        const next = prev - 1
+        if (next <= 0) {
+          clearInterval(graceInterval)
+          // Now start the real session
+          detector.current.start(showScold)
+          timerRef.current = setInterval(() => {
+            session.tickElapsed()
+          }, 1000)
+        }
+        return next
+      })
     }, 1000)
 
     return () => {
       active = false
+      clearInterval(graceInterval)
       if (timerRef.current) clearInterval(timerRef.current)
       detector.current.stop()
       stopAmbient()
@@ -144,17 +154,32 @@ export default function Session() {
   const phaseKey =
     `session.phase${session.phase.charAt(0).toUpperCase() + session.phase.slice(1)}` as const
 
+  const inGrace = graceRemaining > 0
+
   return (
     <View style={styles.fullscreen}>
       <View style={styles.center}>
-        <PresenceOrb phase={session.phase} joltTrigger={joltTrigger} size={180} />
+        <PresenceOrb
+          phase={inGrace ? 'idle' : session.phase}
+          joltTrigger={joltTrigger}
+          size={180}
+          angry={scoldVisible}
+        />
 
-        {session.mode === 'simple' && (
-          <Text style={[typography.mono, styles.timer]}>{timeStr}</Text>
-        )}
-
-        {session.mode !== 'simple' && (
-          <Text style={[typography.caption, { marginTop: spacing.xl }]}>{t(phaseKey)}</Text>
+        {inGrace ? (
+          <>
+            <Text style={[typography.mono, styles.graceCount]}>{graceRemaining}</Text>
+            <Text style={styles.subText}>{graceMessage}</Text>
+          </>
+        ) : (
+          <>
+            {session.mode === 'simple' && (
+              <Text style={[typography.mono, styles.timer]}>{timeStr}</Text>
+            )}
+            {session.mode !== 'simple' && (
+              <Text style={[styles.subText, { marginTop: spacing.xl }]}>{t(phaseKey)}</Text>
+            )}
+          </>
         )}
       </View>
 
@@ -178,8 +203,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  timer: {
-    color: colors.muted,
+  graceCount: {
+    color: colors.text,
     marginTop: spacing.xl,
+    opacity: 0.4,
+  },
+  timer: {
+    color: colors.text,
+    marginTop: spacing.xl,
+    opacity: 0.45,
+  },
+  subText: {
+    fontSize: 12,
+    letterSpacing: 2,
+    color: colors.text,
+    opacity: 0.45,
+    marginTop: spacing.sm,
+    textAlign: 'center',
   },
 })

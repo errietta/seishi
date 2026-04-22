@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { View } from 'react-native'
 import Animated, {
   useSharedValue,
@@ -7,6 +7,7 @@ import Animated, {
   withSequence,
   withTiming,
   withSpring,
+  interpolateColor,
   Easing,
 } from 'react-native-reanimated'
 import { colors } from '../lib/theme'
@@ -16,55 +17,100 @@ interface Props {
   phase?: Phase
   joltTrigger?: number
   size?: number
+  angry?: boolean
 }
 
-export default function PresenceOrb({ phase = 'idle', joltTrigger = 0, size = 160 }: Props) {
+export default function PresenceOrb({ phase = 'idle', joltTrigger = 0, size = 160, angry = false }: Props) {
   const scale = useSharedValue(1)
   const coreOpacity = useSharedValue(0.7)
   const glowOpacity = useSharedValue(0.3)
   const driftX = useSharedValue(0)
   const driftY = useSharedValue(0)
+  const angryProgress = useSharedValue(0)
 
-  // Breathing animation — changes speed based on phase
+  const angryRef = useRef(angry)
+  angryRef.current = angry
+
+  // Breathing + angry pulse — single effect handles both
   useEffect(() => {
-    const breathIn = phase === 'idle' ? 6000 : phase === 'winding' ? 5000 : 4000
-    const hold = breathIn / 2
-    const breathOut = breathIn
+    if (angry) {
+      // Rage pulse: tight, fast, threatening
+      scale.value = withRepeat(
+        withSequence(
+          withTiming(1.22, { duration: 280, easing: Easing.out(Easing.quad) }),
+          withTiming(0.96, { duration: 520, easing: Easing.in(Easing.quad) }),
+        ),
+        -1,
+        false,
+      )
+      coreOpacity.value = withRepeat(
+        withSequence(
+          withTiming(1.0, { duration: 180 }),
+          withTiming(0.65, { duration: 520 }),
+        ),
+        -1,
+        false,
+      )
+      glowOpacity.value = withRepeat(
+        withSequence(
+          withTiming(1.0, { duration: 180 }),
+          withTiming(0.25, { duration: 520 }),
+        ),
+        -1,
+        false,
+      )
+    } else {
+      const breathIn = phase === 'idle' ? 6000 : phase === 'winding' ? 5000 : 4000
+      const hold = breathIn / 2
+      const breathOut = breathIn
 
-    scale.value = withRepeat(
-      withSequence(
-        withTiming(1.18, { duration: breathIn, easing: Easing.inOut(Easing.sin) }),
-        withTiming(1.18, { duration: hold }),
-        withTiming(1.0, { duration: breathOut, easing: Easing.inOut(Easing.sin) }),
-      ),
-      -1,
-      false,
-    )
+      scale.value = withRepeat(
+        withSequence(
+          withTiming(1.18, { duration: breathIn, easing: Easing.inOut(Easing.sin) }),
+          withTiming(1.18, { duration: hold }),
+          withTiming(1.0, { duration: breathOut, easing: Easing.inOut(Easing.sin) }),
+        ),
+        -1,
+        false,
+      )
+      coreOpacity.value = withRepeat(
+        withSequence(
+          withTiming(1.0, { duration: breathIn, easing: Easing.inOut(Easing.sin) }),
+          withTiming(1.0, { duration: hold }),
+          withTiming(0.6, { duration: breathOut, easing: Easing.inOut(Easing.sin) }),
+        ),
+        -1,
+        false,
+      )
+      glowOpacity.value = withRepeat(
+        withSequence(
+          withTiming(phase === 'idle' ? 0.5 : 0.8, { duration: breathIn }),
+          withTiming(0.2, { duration: breathOut }),
+        ),
+        -1,
+        true,
+      )
+    }
+  }, [angry, phase])
 
-    coreOpacity.value = withRepeat(
-      withSequence(
-        withTiming(1.0, { duration: breathIn, easing: Easing.inOut(Easing.sin) }),
-        withTiming(1.0, { duration: hold }),
-        withTiming(0.6, { duration: breathOut, easing: Easing.inOut(Easing.sin) }),
-      ),
-      -1,
-      false,
-    )
+  // Angry color transition
+  useEffect(() => {
+    angryProgress.value = withTiming(angry ? 1 : 0, { duration: 500 })
+    if (angry) {
+      // Spring back to centre while angry — still and staring
+      driftX.value = withSpring(0, { damping: 12, stiffness: 80 })
+      driftY.value = withSpring(0, { damping: 12, stiffness: 80 })
+    }
+  }, [angry])
 
-    glowOpacity.value = withRepeat(
-      withSequence(
-        withTiming(phase === 'idle' ? 0.5 : 0.8, { duration: breathIn }),
-        withTiming(0.2, { duration: breathOut }),
-      ),
-      -1,
-      true,
-    )
-  }, [phase])
-
-  // Slow drift — random walk with spring physics
+  // Slow drift (only when not angry)
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout>
     function drift() {
+      if (angryRef.current) {
+        timeoutId = setTimeout(drift, 500)
+        return
+      }
       driftX.value = withSpring((Math.random() - 0.5) * 80, { damping: 20, stiffness: 8 })
       driftY.value = withSpring((Math.random() - 0.5) * 60, { damping: 20, stiffness: 8 })
       timeoutId = setTimeout(drift, 3000 + Math.random() * 3000)
@@ -93,6 +139,35 @@ export default function PresenceOrb({ phase = 'idle', joltTrigger = 0, size = 16
 
   const glowStyle = useAnimatedStyle(() => ({ opacity: glowOpacity.value }))
 
+  const coreColorStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      angryProgress.value,
+      [0, 1],
+      [colors.orbCore, colors.danger],
+    ),
+    shadowColor: interpolateColor(
+      angryProgress.value,
+      [0, 1],
+      [colors.orbGlow, colors.danger],
+    ),
+  }))
+
+  const glowColorStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      angryProgress.value,
+      [0, 1],
+      [colors.orbGlow, colors.danger],
+    ),
+  }))
+
+  const midColorStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      angryProgress.value,
+      [0, 1],
+      [colors.orbCore, colors.danger],
+    ),
+  }))
+
   const half = size / 2
   const glowSize = size * 2.2
 
@@ -107,35 +182,38 @@ export default function PresenceOrb({ phase = 'idle', joltTrigger = 0, size = 16
               width: glowSize,
               height: glowSize,
               borderRadius: glowSize / 2,
-              backgroundColor: colors.orbGlow,
             },
+            glowColorStyle,
             glowStyle,
           ]}
         />
         {/* Mid glow */}
-        <View
-          style={{
-            position: 'absolute',
-            width: size * 1.5,
-            height: size * 1.5,
-            borderRadius: (size * 1.5) / 2,
-            backgroundColor: colors.orbCore,
-            opacity: 0.12,
-          }}
+        <Animated.View
+          style={[
+            {
+              position: 'absolute',
+              width: size * 1.5,
+              height: size * 1.5,
+              borderRadius: (size * 1.5) / 2,
+              opacity: 0.12,
+            },
+            midColorStyle,
+          ]}
         />
         {/* Core */}
-        <View
-          style={{
-            width: size,
-            height: size,
-            borderRadius: half,
-            backgroundColor: colors.orbCore,
-            shadowColor: colors.orbGlow,
-            shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 1,
-            shadowRadius: 40,
-            elevation: 25,
-          }}
+        <Animated.View
+          style={[
+            {
+              width: size,
+              height: size,
+              borderRadius: half,
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 1,
+              shadowRadius: 40,
+              elevation: 25,
+            },
+            coreColorStyle,
+          ]}
         >
           {/* Inner highlight */}
           <View
@@ -150,7 +228,7 @@ export default function PresenceOrb({ phase = 'idle', joltTrigger = 0, size = 16
               opacity: 0.6,
             }}
           />
-        </View>
+        </Animated.View>
       </Animated.View>
     </View>
   )

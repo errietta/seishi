@@ -13,6 +13,7 @@ export interface SessionRecord {
 
 const STREAK_KEY = 'seishi_streak'
 const TONE_KEY = 'seishi_tone'
+const DEV_MODE_KEY = 'seishi_devmode'
 const GRACE_HOURS = 2
 
 function isConsecutiveDay(lastDateStr: string, now: Date): boolean {
@@ -27,10 +28,12 @@ interface StreakState {
   lastSessionDate: string | null
   history: SessionRecord[]
   tone: 'strict' | 'encouraging'
+  devMode: boolean
   initialized: boolean
   initialize: () => Promise<void>
   recordSession: (record: Omit<SessionRecord, 'date'>) => Promise<void>
   setTone: (tone: 'strict' | 'encouraging') => void
+  setDevMode: (on: boolean) => void
 }
 
 export const useStreakStore = create<StreakState>((set, get) => ({
@@ -38,16 +41,23 @@ export const useStreakStore = create<StreakState>((set, get) => ({
   lastSessionDate: null,
   history: [],
   tone: 'strict',
+  devMode: false,
   initialized: false,
 
   initialize: async () => {
     try {
-      const [streakRaw, tone] = await Promise.all([
+      const [streakRaw, tone, devModeRaw] = await Promise.all([
         AsyncStorage.getItem(STREAK_KEY),
         AsyncStorage.getItem(TONE_KEY),
+        AsyncStorage.getItem(DEV_MODE_KEY),
       ])
       const data = streakRaw ? JSON.parse(streakRaw) : {}
-      set({ ...data, tone: (tone as 'strict' | 'encouraging') ?? 'strict', initialized: true })
+      set({
+        ...data,
+        tone: (tone as 'strict' | 'encouraging') ?? 'strict',
+        devMode: devModeRaw === '1',
+        initialized: true,
+      })
     } catch {
       set({ initialized: true })
     }
@@ -80,5 +90,10 @@ export const useStreakStore = create<StreakState>((set, get) => ({
   setTone: (tone) => {
     set({ tone })
     AsyncStorage.setItem(TONE_KEY, tone).catch(() => {})
+  },
+
+  setDevMode: (on) => {
+    set({ devMode: on })
+    AsyncStorage.setItem(DEV_MODE_KEY, on ? '1' : '0').catch(() => {})
   },
 }))
