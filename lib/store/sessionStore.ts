@@ -2,6 +2,9 @@ import { create } from 'zustand'
 
 export type Mode = 'simple' | 'raw' | 'spicy'
 export type Phase = 'idle' | 'active' | 'winding'
+export type PunishmentMode = 'none' | 'add-time' | 'reset'
+
+const PUNISHMENT_SECONDS = 120
 
 interface SessionState {
   mode: Mode | null
@@ -11,14 +14,19 @@ interface SessionState {
   pickups: number
   isRunning: boolean
   sound: string | null
-  startSession: (mode: Mode, duration: number, sound: string | null) => void
+  punishmentMode: PunishmentMode
+  startSession: (mode: Mode, duration: number, sound: string | null, punishment: PunishmentMode) => void
   pauseSession: () => void
   resumeSession: () => void
   endSession: () => void
   registerPickup: () => void
   tickElapsed: () => void
+  addTime: (seconds: number) => void
+  resetTimer: () => void
   reset: () => void
 }
+
+export { PUNISHMENT_SECONDS }
 
 export const useSessionStore = create<SessionState>((set) => ({
   mode: null,
@@ -28,9 +36,10 @@ export const useSessionStore = create<SessionState>((set) => ({
   pickups: 0,
   isRunning: false,
   sound: null,
+  punishmentMode: 'none',
 
-  startSession: (mode, duration, sound) =>
-    set({ mode, duration, elapsed: 0, phase: 'active', pickups: 0, isRunning: true, sound }),
+  startSession: (mode, duration, sound, punishment) =>
+    set({ mode, duration, elapsed: 0, phase: 'active', pickups: 0, isRunning: true, sound, punishmentMode: punishment }),
 
   pauseSession: () => set({ isRunning: false }),
 
@@ -48,6 +57,16 @@ export const useSessionStore = create<SessionState>((set) => ({
       return { elapsed, phase }
     }),
 
+  addTime: (seconds) =>
+    set((s) => {
+      const duration = s.duration + seconds
+      const remaining = duration - s.elapsed
+      const phase: Phase = remaining <= 60 ? 'winding' : 'active'
+      return { duration, phase }
+    }),
+
+  resetTimer: () => set({ elapsed: 0, phase: 'active' }),
+
   reset: () =>
-    set({ mode: null, duration: 0, elapsed: 0, phase: 'idle', pickups: 0, isRunning: false, sound: null }),
+    set({ mode: null, duration: 0, elapsed: 0, phase: 'idle', pickups: 0, isRunning: false, sound: null, punishmentMode: 'none' }),
 }))

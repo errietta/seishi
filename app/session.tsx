@@ -7,9 +7,9 @@ import * as Haptics from 'expo-haptics'
 import { useTranslation } from 'react-i18next'
 import PresenceOrb from '../components/PresenceOrb'
 import ScoldOverlay from '../components/ScoldOverlay'
-import { useSessionStore } from '../lib/store/sessionStore'
+import { useSessionStore, PUNISHMENT_SECONDS } from '../lib/store/sessionStore'
 import { useStreakStore } from '../lib/store/streakStore'
-import { createPickupDetector } from '../lib/sensors/pickupDetector'
+import { createPickupDetector, type PickupCause } from '../lib/sensors/pickupDetector'
 import { playAmbient, stopAmbient } from '../lib/audio/ambientPlayer'
 import { getRandomMessage } from '../lib/i18n'
 import { colors, spacing, typography } from '../lib/theme'
@@ -24,6 +24,7 @@ export default function Session() {
 
   const [scoldVisible, setScoldVisible] = useState(false)
   const [scoldMessage, setScoldMessage] = useState('')
+  const [penaltyLabel, setPenaltyLabel] = useState<string | undefined>()
   const [joltTrigger, setJoltTrigger] = useState(0)
 
   const originalBrightness = useRef<number | null>(null)
@@ -45,17 +46,47 @@ export default function Session() {
     router.replace('/session-complete')
   }, [])
 
-  const showScold = useCallback(() => {
-    session.pauseSession()
-    session.registerPickup()
-    setJoltTrigger((n) => n + 1)
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {})
-    if (originalBrightness.current !== null) {
-      Brightness.setBrightnessAsync(originalBrightness.current).catch(() => {})
-    }
-    setScoldMessage(getRandomMessage(tone, 'pickup'))
-    setScoldVisible(true)
-  }, [tone])
+  const showScold = useCallback(
+    (cause: PickupCause) => {
+      session.pauseSession()
+      session.registerPickup()
+      setJoltTrigger((n) => n + 1)
+
+      const isDeliberate = cause === 'app-switch'
+      Haptics.notificationAsync(
+        isDeliberate
+          ? Haptics.NotificationFeedbackType.Error
+          : Haptics.NotificationFeedbackType.Warning,
+      ).catch(() => {})
+
+      if (originalBrightness.current !== null) {
+        Brightness.setBrightnessAsync(originalBrightness.current).catch(() => {})
+      }
+
+      // Pick message pool — app-switch gets its own angrier pool
+      const messageKey = isDeliberate ? 'appSwitch' : 'pickup'
+      setScoldMessage(getRandomMessage(tone, messageKey))
+
+      // Apply punishment for deliberate app-switch
+      let label: string | undefined
+      if (isDeliberate) {
+        const punishment = session.punishmentMode
+        if (punishment === 'add-time') {
+          session.addTime(PUNISHMENT_SECONDS)
+          label =
+            session.mode === 'spicy'
+              ? t('scold.penaltyAddTimeSilent')
+              : t('scold.penaltyAddTime')
+        } else if (punishment === 'reset') {
+          session.resetTimer()
+          label = t('scold.penaltyReset')
+        }
+      }
+      setPenaltyLabel(label)
+      setScoldVisible(true)
+    },
+    [tone, session.punishmentMode, session.mode],
+  )
 
   function handleResume() {
     setScoldVisible(false)
@@ -110,7 +141,8 @@ export default function Session() {
   const secs = remaining % 60
   const timeStr = `${mins}:${secs.toString().padStart(2, '0')}`
 
-  const phaseKey = `session.phase${session.phase.charAt(0).toUpperCase() + session.phase.slice(1)}` as const
+  const phaseKey =
+    `session.phase${session.phase.charAt(0).toUpperCase() + session.phase.slice(1)}` as const
 
   return (
     <View style={styles.fullscreen}>
@@ -122,13 +154,16 @@ export default function Session() {
         )}
 
         {session.mode !== 'simple' && (
-          <Text style={[typography.caption, { marginTop: spacing.xl }]}>
-            {t(phaseKey)}
-          </Text>
+          <Text style={[typography.caption, { marginTop: spacing.xl }]}>{t(phaseKey)}</Text>
         )}
       </View>
 
-      <ScoldOverlay visible={scoldVisible} message={scoldMessage} onResume={handleResume} />
+      <ScoldOverlay
+        visible={scoldVisible}
+        message={scoldMessage}
+        penaltyLabel={penaltyLabel}
+        onResume={handleResume}
+      />
     </View>
   )
 }

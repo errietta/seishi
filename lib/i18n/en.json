@@ -33,6 +33,10 @@
     "soundRain": "Rain",
     "soundWhiteNoise": "White Noise",
     "soundBinaural": "Binaural",
+    "punishment": "PUNISHMENT FOR LEAVING",
+    "punishmentNone": "None",
+    "punishmentAddTime": "+2 min",
+    "punishmentReset": "Reset timer",
     "begin": "BEGIN SESSION"
   },
   "session": {
@@ -41,7 +45,10 @@
     "phaseWinding": "almost there"
   },
   "scold": {
-    "resume": "I'M BACK, I SWEAR"
+    "resume": "I'M BACK, I SWEAR",
+    "penaltyAddTime": "+2:00 ADDED",
+    "penaltyAddTimeSilent": "TIME EXTENDED",
+    "penaltyReset": "TIMER RESET"
   },
   "complete": {
     "title": "SESSION COMPLETE",
@@ -78,6 +85,18 @@
         "Five seconds. That is all it took.",
         "You were doing so well. Now you are not."
       ],
+      "appSwitch": [
+        "You LEFT. You actually LEFT.",
+        "The audacity. The sheer, breathtaking audacity.",
+        "I saw that. I see everything.",
+        "That was not an accident. You know what you did.",
+        "You chose Instagram over enlightenment. Reflect on that.",
+        "Coward.",
+        "Running away won't make your problems smaller. It will make your session longer.",
+        "You have summoned consequences.",
+        "Where did you go? DID IT HELP? NO. COME BACK.",
+        "I cannot believe you. And yet, here we are."
+      ],
       "complete": [
         "Acceptable. Do not celebrate.",
         "You have done the bare minimum. Good.",
@@ -109,6 +128,15 @@
         "It's okay. Start again.",
         "Phones are designed to distract. You're fighting that. Come back.",
         "One interruption doesn't ruin the session."
+      ],
+      "appSwitch": [
+        "Hey — you stepped away intentionally. That's okay. Come back.",
+        "You left. The door is still open. Return.",
+        "The pull is strong. You felt it. Now return.",
+        "That was a deliberate choice. This is a better one.",
+        "Noticed. It's okay. What matters is you're back.",
+        "The world waited. It'll keep waiting. You're here now.",
+        "You went somewhere else. That somewhere isn't going anywhere. Come back."
       ],
       "complete": [
         "Beautiful. You showed up.",

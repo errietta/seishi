@@ -14,7 +14,7 @@ i18next
 export default i18next
 
 type Tone = 'strict' | 'encouraging'
-type MessageKey = 'pickup' | 'complete' | 'streakBroken' | 'streakMilestone'
+type MessageKey = 'pickup' | 'appSwitch' | 'complete' | 'streakBroken' | 'streakMilestone'
 
 export function getRandomMessage(tone: Tone, key: MessageKey): string {
   const pool = en.messages[tone][key]

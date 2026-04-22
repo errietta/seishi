@@ -6,7 +6,7 @@ import Screen from '../components/ui/Screen'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Spacer from '../components/ui/Spacer'
-import { useSessionStore, type Mode } from '../lib/store/sessionStore'
+import { useSessionStore, type Mode, type PunishmentMode } from '../lib/store/sessionStore'
 import { colors, radius, spacing, typography } from '../lib/theme'
 
 const DURATIONS = [5, 10, 15, 20]
@@ -23,6 +23,7 @@ export default function SessionConfig() {
   const [sound, setSound] = useState<string | null>(null)
   const [spicyMin, setSpicyMin] = useState(7)
   const [spicyMax, setSpicyMax] = useState(15)
+  const [punishment, setPunishment] = useState<PunishmentMode>('none')
 
   const soundLabel = (key: string) => {
     if (key === 'none') return t('config.soundNone')
@@ -36,7 +37,7 @@ export default function SessionConfig() {
       mode === 'spicy'
         ? (spicyMin + Math.floor(Math.random() * (spicyMax - spicyMin + 1))) * 60
         : duration * 60
-    startSession(mode as Mode, finalDuration, mode === 'simple' ? sound : null)
+    startSession(mode as Mode, finalDuration, mode === 'simple' ? sound : null, punishment)
     router.replace('/session')
   }
 
@@ -123,6 +124,29 @@ export default function SessionConfig() {
           </>
         )}
 
+        <Spacer size={spacing.md} />
+        <Card>
+          <Text style={[typography.caption]}>{t('config.punishment')}</Text>
+          <Spacer size={spacing.md} />
+          <View style={styles.chipRow}>
+            {(['none', 'add-time', 'reset'] as PunishmentMode[]).map((key) => (
+              <Chip
+                key={key}
+                label={
+                  key === 'none'
+                    ? t('config.punishmentNone')
+                    : key === 'add-time'
+                    ? t('config.punishmentAddTime')
+                    : t('config.punishmentReset')
+                }
+                active={punishment === key}
+                onPress={() => setPunishment(key)}
+                danger={key !== 'none'}
+              />
+            ))}
+          </View>
+        </Card>
+
         <Spacer size={spacing.xl} />
         <Button label={t('config.begin')} onPress={begin} />
       </View>
@@ -134,20 +158,32 @@ function Chip({
   label,
   active,
   onPress,
+  danger = false,
 }: {
   label: string
   active: boolean
   onPress: () => void
+  danger?: boolean
 }) {
+  const activeColor = danger ? colors.danger : colors.accent
   return (
     <TouchableOpacity
       onPress={onPress}
       style={[
         styles.chip,
-        active && { backgroundColor: colors.accent, borderColor: colors.accent },
+        active && { backgroundColor: activeColor, borderColor: activeColor },
+        !active && danger && { borderColor: colors.danger + '66' },
       ]}
     >
-      <Text style={[styles.chipText, active && { color: colors.bg }]}>{label}</Text>
+      <Text
+        style={[
+          styles.chipText,
+          active && { color: colors.bg },
+          !active && danger && { color: colors.danger + 'aa' },
+        ]}
+      >
+        {label}
+      </Text>
     </TouchableOpacity>
   )
 }
