@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,6 +8,7 @@ import Animated, {
 import { router } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import Screen from '../components/ui/Screen'
+import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Spacer from '../components/ui/Spacer'
 import ConcentrationSlider from '../components/ConcentrationSlider'
@@ -27,6 +28,8 @@ export default function SessionComplete() {
 
   const score = calculateScore(session.pickups, streak.currentStreak)
   const message = useRef(getRandomMessage(streak.tone, 'complete')).current
+  const challengeMinutes = useRef(Math.floor(Math.random() * 10) + 1).current
+  const challengeMessage = useRef(getRandomMessage(streak.tone, 'challenge')).current
 
   const scoreScale = useSharedValue(0)
   useEffect(() => {
@@ -37,7 +40,7 @@ export default function SessionComplete() {
     transform: [{ scale: scoreScale.value }],
   }))
 
-  async function handleContinue() {
+  async function save() {
     if (!savedRef.current && session.mode) {
       savedRef.current = true
       await streak.recordSession({
@@ -48,13 +51,23 @@ export default function SessionComplete() {
         pickups: session.pickups,
       })
     }
+  }
+
+  async function handleContinue() {
+    await save()
     session.reset()
     router.replace('/')
   }
 
+  async function handleAcceptChallenge() {
+    await save()
+    session.startSession('spicy', challengeMinutes * 60, null, 'none', false)
+    router.replace('/session')
+  }
+
   return (
     <Screen>
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <Text style={[typography.title, { color: colors.text }]}>{t('complete.title')}</Text>
         <Spacer size={spacing.xl} />
 
@@ -88,20 +101,58 @@ export default function SessionComplete() {
         <ConcentrationSlider value={concentration} onChange={setConcentration} />
 
         <Spacer size={spacing.xl} />
-        <Button label={t('complete.continue')} onPress={handleContinue} />
-      </View>
+
+        <Card style={styles.challengeCard}>
+          <Text style={[typography.caption, { color: colors.accent, letterSpacing: 3 }]}>
+            {t('challenge.title')}
+          </Text>
+          <Spacer size={spacing.sm} />
+          <Text style={[typography.body, { color: colors.text, textAlign: 'center' }]}>
+            {t('challenge.description', { minutes: challengeMinutes })}
+          </Text>
+          <Spacer size={spacing.sm} />
+          <Text style={[typography.caption, { color: colors.muted, fontStyle: 'italic', textAlign: 'center' }]}>
+            {challengeMessage}
+          </Text>
+          <Spacer size={spacing.lg} />
+          <View style={styles.challengeButtons}>
+            <Button
+              label={t('challenge.decline')}
+              onPress={handleContinue}
+              variant="ghost"
+              style={styles.challengeBtn}
+            />
+            <Button
+              label={t('challenge.accept')}
+              onPress={handleAcceptChallenge}
+              style={styles.challengeBtn}
+            />
+          </View>
+        </Card>
+
+        <Spacer size={spacing.xl} />
+      </ScrollView>
     </Screen>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: spacing.xl,
     alignItems: 'center',
-    justifyContent: 'center',
   },
   scoreBlock: {
     alignItems: 'center',
+  },
+  challengeCard: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  challengeButtons: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  challengeBtn: {
+    flex: 1,
   },
 })

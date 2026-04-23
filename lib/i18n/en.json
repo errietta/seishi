@@ -39,10 +39,13 @@
     "punishment": "PUNISHMENT FOR LEAVING",
     "punishmentNone": "None",
     "punishmentAddTime": "+2 min",
+    "punishmentAddTimeLong": "+5 min",
     "punishmentReset": "Reset timer",
+    "punishmentRandom": "?",
     "begin": "BEGIN SESSION"
   },
   "session": {
+    "graceInstruction": "put your phone down",
     "phaseIdle": "settle in",
     "phaseActive": "breathe",
     "phaseWinding": "almost there"
@@ -51,6 +54,7 @@
     "resume": "I'M BACK, I SWEAR",
     "penaltyAddTime": "+2:00 ADDED",
     "penaltyAddTimeSilent": "TIME EXTENDED",
+    "penaltyAddTimeLong": "+5:00 ADDED",
     "penaltyReset": "TIMER RESET"
   },
   "complete": {
@@ -67,7 +71,16 @@
     "streak": "CURRENT STREAK",
     "avgConcentration": "AVG CONCENTRATION",
     "history": "SESSIONS",
-    "empty": "No sessions yet. Begin."
+    "empty": "No sessions yet. Begin.",
+    "noStreak": "no streak yet",
+    "focus": "focus",
+    "pickups": "pickups"
+  },
+  "challenge": {
+    "title": "OPTIONAL CHALLENGE",
+    "description": "stay completely still in silence for {{minutes}} minutes",
+    "accept": "ACCEPT",
+    "decline": "skip"
   },
   "settings": {
     "title": "SETTINGS",
@@ -129,6 +142,14 @@
         "Still here. I acknowledge this.",
         "Consistency noted. Do not make it a personality.",
         "The streak grows. So do my expectations."
+      ],
+      "challenge": [
+        "Bet you can't do this one.",
+        "Too scared? I thought so.",
+        "This will end poorly for you. Do it anyway.",
+        "You won't. But try.",
+        "One more. Unless you're afraid.",
+        "You're going to say no. Prove me wrong."
       ]
     },
     "encouraging": {
@@ -179,6 +200,14 @@
         "Consistency is the whole game. You're playing it.",
         "This streak is real. You built it.",
         "Day by day. That's how it works."
+      ],
+      "challenge": [
+        "One more round? You've got it in you.",
+        "Think you can go deeper? Try.",
+        "This one's shorter. You can do it.",
+        "The stillness is still there. Go find it again.",
+        "You're warm. Keep going.",
+        "You already know how. Do it once more."
       ]
     }
   }

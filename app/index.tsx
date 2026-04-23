@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
   },
   orbArea: {
     flex: 1,
+    maxHeight: 260,
     alignItems: 'center',
     justifyContent: 'center',
   },

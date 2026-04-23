@@ -7,7 +7,7 @@ import * as Haptics from 'expo-haptics'
 import { useTranslation } from 'react-i18next'
 import PresenceOrb from '../components/PresenceOrb'
 import ScoldOverlay from '../components/ScoldOverlay'
-import { useSessionStore, PUNISHMENT_SECONDS } from '../lib/store/sessionStore'
+import { useSessionStore, PUNISHMENT_SECONDS, PUNISHMENT_SECONDS_LONG } from '../lib/store/sessionStore'
 import { useStreakStore } from '../lib/store/streakStore'
 import { createPickupDetector, type PickupCause } from '../lib/sensors/pickupDetector'
 import { playAmbient, stopAmbient, playGong } from '../lib/audio/ambientPlayer'
@@ -17,6 +17,7 @@ import type { SoundKey } from '../lib/audio/ambientPlayer'
 
 const KEEP_AWAKE_TAG = 'session'
 const GRACE_SECONDS = 10
+const BRIGHTNESS_DIM_VALUE = 0.2
 
 export default function Session() {
   const { t } = useTranslation()
@@ -72,13 +73,20 @@ export default function Session() {
 
       let label: string | undefined
       if (isDeliberate) {
-        const punishment = session.punishmentMode
+        let punishment = session.punishmentMode
+        if (punishment === 'random') {
+          const options = ['add-time', 'add-time-long', 'reset'] as const
+          punishment = options[Math.floor(Math.random() * options.length)]
+        }
         if (punishment === 'add-time') {
           session.addTime(PUNISHMENT_SECONDS)
           label =
             session.mode === 'spicy'
               ? t('scold.penaltyAddTimeSilent')
               : t('scold.penaltyAddTime')
+        } else if (punishment === 'add-time-long') {
+          session.addTime(PUNISHMENT_SECONDS_LONG)
+          label = t('scold.penaltyAddTimeLong')
         } else if (punishment === 'reset') {
           session.resetTimer()
           label = t('scold.penaltyReset')
@@ -92,7 +100,7 @@ export default function Session() {
 
   function handleResume() {
     setScoldVisible(false)
-    Brightness.setBrightnessAsync(0.01).catch(() => {})
+    Brightness.setBrightnessAsync(BRIGHTNESS_DIM_VALUE).catch(() => {})
     session.resumeSession()
   }
 
@@ -104,7 +112,7 @@ export default function Session() {
       try {
         const current = await Brightness.getBrightnessAsync()
         if (active) originalBrightness.current = current
-        await Brightness.setBrightnessAsync(0.01)
+        await Brightness.setBrightnessAsync(BRIGHTNESS_DIM_VALUE)
       } catch {}
       if (session.sound) {
         playAmbient(session.sound as SoundKey).catch(() => {})
@@ -169,6 +177,7 @@ export default function Session() {
 
         {inGrace ? (
           <>
+            <Text style={styles.graceInstruction}>{t('session.graceInstruction')}</Text>
             <Text style={[typography.mono, styles.graceCount]}>{graceRemaining}</Text>
             <Text style={styles.subText}>{graceMessage}</Text>
           </>
@@ -203,6 +212,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  graceInstruction: {
+    fontSize: 18,
+    letterSpacing: 3,
+    color: colors.text,
+    opacity: 0.75,
+    textAlign: 'center',
+    marginBottom: spacing.sm,
   },
   graceCount: {
     color: colors.text,

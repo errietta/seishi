@@ -69,6 +69,12 @@ export const useStreakStore = create<StreakState>((set, get) => ({
     const todayStr = now.toISOString().split('T')[0]
     const last = state.lastSessionDate
 
+    console.log({
+      todayStr,
+      last,
+      isConsecutive: last ? isConsecutiveDay(last, now) : 'N/A',
+    })
+
     let streak = state.currentStreak
     if (!last) {
       streak = 1

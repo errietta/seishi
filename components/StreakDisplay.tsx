@@ -1,8 +1,10 @@
 import React from 'react'
 import { Text, View } from 'react-native'
+import { useTranslation } from 'react-i18next'
 import { colors, spacing } from '../lib/theme'
 
 export default function StreakDisplay({ streak }: { streak: number }) {
+  const { t } = useTranslation()
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
       <Text style={{ fontSize: 24 }}>🔥</Text>
@@ -10,7 +12,7 @@ export default function StreakDisplay({ streak }: { streak: number }) {
         {streak}
       </Text>
       <Text style={{ fontSize: 12, letterSpacing: 2, color: colors.muted, alignSelf: 'flex-end', marginBottom: 4 }}>
-        DAY STREAK
+        {t('home.streakLabel').toUpperCase()}
       </Text>
     </View>
   )

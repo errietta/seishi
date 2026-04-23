@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import Screen from '../components/ui/Screen'
@@ -47,7 +47,7 @@ export default function SessionConfig() {
 
   return (
     <Screen>
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <TouchableOpacity onPress={() => router.back()} style={styles.back}>
           <Text style={[typography.caption, { color: colors.muted }]}>← BACK</Text>
         </TouchableOpacity>
@@ -133,7 +133,7 @@ export default function SessionConfig() {
           <Text style={[typography.caption]}>{t('config.punishment')}</Text>
           <Spacer size={spacing.md} />
           <View style={styles.chipRow}>
-            {(['none', 'add-time', 'reset'] as PunishmentMode[]).map((key) => (
+            {(['none', 'add-time', 'add-time-long', 'reset', 'random'] as PunishmentMode[]).map((key) => (
               <Chip
                 key={key}
                 label={
@@ -141,7 +141,11 @@ export default function SessionConfig() {
                     ? t('config.punishmentNone')
                     : key === 'add-time'
                     ? t('config.punishmentAddTime')
-                    : t('config.punishmentReset')
+                    : key === 'add-time-long'
+                    ? t('config.punishmentAddTimeLong')
+                    : key === 'reset'
+                    ? t('config.punishmentReset')
+                    : t('config.punishmentRandom')
                 }
                 active={punishment === key}
                 onPress={() => setPunishment(key)}
@@ -163,7 +167,8 @@ export default function SessionConfig() {
 
         <Spacer size={spacing.xl} />
         <Button label={t('config.begin')} onPress={begin} />
-      </View>
+        <Spacer size={spacing.xl} />
+      </ScrollView>
     </Screen>
   )
 }
@@ -204,7 +209,6 @@ function Chip({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: spacing.xl,
   },
   back: {

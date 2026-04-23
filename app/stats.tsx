@@ -33,7 +33,7 @@ export default function Stats() {
         </View>
         <Text style={[typography.caption]}>
           {item.mode.toUpperCase()} · {Math.round(item.duration / 60)}m ·{' '}
-          focus {item.concentration}/10 · {item.pickups} pickups
+          {t('stats.focus')} {item.concentration}/10 · {item.pickups} {t('stats.pickups')}
         </Text>
       </Card>
     )
@@ -59,7 +59,7 @@ export default function Stats() {
               {streak > 0 ? (
                 <StreakDisplay streak={streak} />
               ) : (
-                <Text style={[typography.body, { color: colors.muted }]}>No streak yet.</Text>
+                <Text style={[typography.body, { color: colors.muted }]}>{t('stats.noStreak')}</Text>
               )}
               <Spacer size={spacing.sm} />
               <Text style={[typography.caption]}>

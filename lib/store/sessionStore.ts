@@ -2,9 +2,10 @@ import { create } from 'zustand'
 
 export type Mode = 'simple' | 'raw' | 'spicy'
 export type Phase = 'idle' | 'active' | 'winding'
-export type PunishmentMode = 'none' | 'add-time' | 'reset'
+export type PunishmentMode = 'none' | 'add-time' | 'add-time-long' | 'reset' | 'random'
 
 const PUNISHMENT_SECONDS = 120
+const PUNISHMENT_SECONDS_LONG = 300
 
 interface SessionState {
   mode: Mode | null
@@ -27,7 +28,7 @@ interface SessionState {
   reset: () => void
 }
 
-export { PUNISHMENT_SECONDS }
+export { PUNISHMENT_SECONDS, PUNISHMENT_SECONDS_LONG }
 
 export const useSessionStore = create<SessionState>((set) => ({
   mode: null,
