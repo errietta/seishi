@@ -78,6 +78,52 @@ This pushes JS changes instantly without a full rebuild. Press `r` in the termin
 
 ---
 
+## Building for release (Android)
+
+### Prerequisites
+
+- The `android/` directory must exist. If it's missing, regenerate it first:
+  ```bash
+  npx expo prebuild --platform android
+  ```
+- Set your signing key env vars (same keystore used for other apps):
+  ```bash
+  export JQUIZ_RELEASE_STORE_FILE=/path/to/your.keystore
+  export JQUIZ_RELEASE_STORE_PASSWORD=yourpassword
+  ```
+
+### APK (sideload / direct install)
+
+```bash
+cd android && ./gradlew :app:assembleRelease
+```
+
+Output: `android/app/build/outputs/apk/release/app-release.apk`
+
+Install directly to a connected device:
+```bash
+adb install android/app/build/outputs/apk/release/app-release.apk
+```
+
+### AAB (Google Play Store)
+
+Play Store requires the AAB format for new app submissions:
+
+```bash
+cd android && ./gradlew :app:bundleRelease
+```
+
+Output: `android/app/build/outputs/bundle/release/app-release.aab`
+
+Upload this file in Play Console → your app → Production (or Internal Testing).
+
+### Before each store upload
+
+- Bump `expo.version` in `app.json` (human-readable, e.g. `"1.0.1"`)
+- Bump `versionCode` in `android/app/build.gradle` (integer, must increase by at least 1 each upload)
+
+---
+
 ## Project structure
 
 ```

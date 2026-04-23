@@ -26,6 +26,8 @@ export default function SessionComplete() {
   const [concentration, setConcentration] = useState(5)
   const savedRef = useRef(false)
 
+  const devMode = useStreakStore((s) => s.devMode)
+
   const score = calculateScore(session.pickups, streak.currentStreak)
   const message = useRef(getRandomMessage(streak.tone, 'complete')).current
   const challengeMinutes = useRef(Math.floor(Math.random() * 10) + 1).current
@@ -61,7 +63,7 @@ export default function SessionComplete() {
 
   async function handleAcceptChallenge() {
     await save()
-    session.startSession('spicy', challengeMinutes * 60, null, 'none', false)
+    session.startSession('spicy', devMode ? 5 : challengeMinutes * 60, null, 'none', false, true)
     router.replace('/session')
   }
 
@@ -102,33 +104,37 @@ export default function SessionComplete() {
 
         <Spacer size={spacing.xl} />
 
-        <Card style={styles.challengeCard}>
-          <Text style={[typography.caption, { color: colors.accent, letterSpacing: 3 }]}>
-            {t('challenge.title')}
-          </Text>
-          <Spacer size={spacing.sm} />
-          <Text style={[typography.body, { color: colors.text, textAlign: 'center' }]}>
-            {t('challenge.description', { minutes: challengeMinutes })}
-          </Text>
-          <Spacer size={spacing.sm} />
-          <Text style={[typography.caption, { color: colors.muted, fontStyle: 'italic', textAlign: 'center' }]}>
-            {challengeMessage}
-          </Text>
-          <Spacer size={spacing.lg} />
-          <View style={styles.challengeButtons}>
-            <Button
-              label={t('challenge.decline')}
-              onPress={handleContinue}
-              variant="ghost"
-              style={styles.challengeBtn}
-            />
-            <Button
-              label={t('challenge.accept')}
-              onPress={handleAcceptChallenge}
-              style={styles.challengeBtn}
-            />
-          </View>
-        </Card>
+        {!session.isChallenge ? (
+          <Card style={styles.challengeCard}>
+            <Text style={[typography.caption, { color: colors.accent, letterSpacing: 3 }]}>
+              {t('challenge.title')}
+            </Text>
+            <Spacer size={spacing.sm} />
+            <Text style={[typography.body, { color: colors.text, textAlign: 'center' }]}>
+              {t('challenge.description', { minutes: challengeMinutes })}
+            </Text>
+            <Spacer size={spacing.sm} />
+            <Text style={[typography.caption, { color: colors.muted, fontStyle: 'italic', textAlign: 'center' }]}>
+              {challengeMessage}
+            </Text>
+            <Spacer size={spacing.lg} />
+            <View style={styles.challengeButtons}>
+              <Button
+                label={t('challenge.decline')}
+                onPress={handleContinue}
+                variant="ghost"
+                style={styles.challengeBtn}
+              />
+              <Button
+                label={t('challenge.accept')}
+                onPress={handleAcceptChallenge}
+                style={styles.challengeBtn}
+              />
+            </View>
+          </Card>
+        ) : (
+          <Button label={t('complete.continue')} onPress={handleContinue} />
+        )}
 
         <Spacer size={spacing.xl} />
       </ScrollView>
@@ -151,6 +157,7 @@ const styles = StyleSheet.create({
   challengeButtons: {
     flexDirection: 'row',
     gap: spacing.md,
+    width: '100%',
   },
   challengeBtn: {
     flex: 1,
