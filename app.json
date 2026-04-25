@@ -26,7 +26,8 @@
             "package": "me.errietta.seishi"
         },
         "web": {
-            "favicon": "./assets/favicon.png"
+            "favicon": "./assets/favicon.png",
+            "baseUrl": "/seishi"
         },
         "plugins": ["expo-router"]
     }
