@@ -4,7 +4,7 @@
         "subtitle": "stillness",
         "begin": "BEGIN",
         "streakLabel": "day streak",
-        "lastScore": "last score",
+        "lastScore": "last session",
         "noStreak": "start your streak"
     },
     "modes": {
@@ -59,7 +59,7 @@
     },
     "complete": {
         "title": "SESSION COMPLETE",
-        "score": "SCORE",
+        "score": "COINS EARNED",
         "concentration": "HOW FOCUSED WERE YOU?",
         "concentrationHint": "be honest",
         "continue": "CONTINUE",

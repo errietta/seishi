@@ -15,6 +15,9 @@ export default function Home() {
     const streak = useStreakStore((s) => s.currentStreak);
     const history = useStreakStore((s) => s.history);
     const lastScore = history[0]?.score;
+    const totalPoints = Math.round(
+        history.reduce((sum, r) => sum + r.score, 0),
+    );
 
     return (
         <Screen>
@@ -33,6 +36,11 @@ export default function Home() {
                         >
                             RECORD
                         </Text>
+                        {totalPoints > 0 && (
+                            <Text style={styles.walletLabel}>
+                                🪙 {totalPoints.toLocaleString()}
+                            </Text>
+                        )}
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => router.push("/settings")}
@@ -68,7 +76,7 @@ export default function Home() {
                 <View style={styles.orbArea}>
                     <PresenceOrb
                         phase="idle"
-                        size={160}
+                        size={110}
                     />
                 </View>
 
@@ -93,7 +101,7 @@ export default function Home() {
                                 { marginTop: spacing.sm },
                             ]}
                         >
-                            {t("home.lastScore")}: {Math.round(lastScore)}
+                            {t("home.lastScore")}: 🪙 {Math.round(lastScore).toLocaleString()}
                         </Text>
                     )}
                 </View>
@@ -127,12 +135,18 @@ const styles = StyleSheet.create({
     },
     orbArea: {
         flex: 1,
-        maxHeight: 260,
+        maxHeight: 180,
         alignItems: "center",
         justifyContent: "center",
     },
     statsBlock: {
         alignItems: "center",
         marginBottom: spacing.lg,
+    },
+
+    walletLabel: {
+        ...typography.caption,
+        color: colors.gold,
+        marginTop: 2,
     },
 });

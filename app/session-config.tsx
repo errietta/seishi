@@ -18,6 +18,7 @@ import {
     type PunishmentMode,
 } from "../lib/store/sessionStore";
 import { useStreakStore } from "../lib/store/streakStore";
+import { calculateCoins } from "../lib/scoring/scoreCalculator";
 import { colors, radius, spacing, typography } from "../lib/theme";
 
 const DURATIONS = [5, 10, 15, 20];
@@ -30,6 +31,7 @@ export default function SessionConfig() {
     const { mode } = useLocalSearchParams<{ mode: Mode }>();
     const startSession = useSessionStore((s) => s.startSession);
     const devMode = useStreakStore((s) => s.devMode);
+    const streak = useStreakStore((s) => s.currentStreak);
 
     const [duration, setDuration] = useState(10);
     const [sound, setSound] = useState<string | null>(null);
@@ -234,6 +236,45 @@ export default function SessionConfig() {
                 </Card>
 
                 <Spacer size={spacing.xl} />
+
+                {(() => {
+                    const base = {
+                        pickups: 0,
+                        streakDays: streak,
+                        punishmentMode: punishment,
+                        mode: mode as Mode,
+                    };
+                    const isSpicy = mode === "spicy";
+                    const minCoins = calculateCoins({
+                        ...base,
+                        durationSeconds: isSpicy
+                            ? spicyMin * 60
+                            : duration * 60,
+                    });
+                    const maxCoins = isSpicy
+                        ? calculateCoins({
+                              ...base,
+                              durationSeconds: spicyMax * 60,
+                          })
+                        : null;
+                    return (
+                        <View style={styles.coinEstimate}>
+                            <Text style={styles.coinEstimateLabel}>
+                                UP TO
+                            </Text>
+                            <Text style={styles.coinEstimateValue}>
+                                {maxCoins !== null
+                                    ? `🪙 ${minCoins.toLocaleString()} – ${maxCoins.toLocaleString()}`
+                                    : `🪙 ${minCoins.toLocaleString()}`}
+                            </Text>
+                            <Text style={styles.coinEstimateHint}>
+                                if no pickups
+                            </Text>
+                        </View>
+                    );
+                })()}
+
+                <Spacer size={spacing.md} />
                 <Button
                     label={t("config.begin")}
                     onPress={begin}
@@ -306,5 +347,36 @@ const styles = StyleSheet.create({
         fontSize: 12,
         letterSpacing: 1,
         color: colors.muted,
+    },
+
+    coinEstimate: {
+        alignItems: "center" as const,
+        paddingVertical: spacing.md,
+        paddingHorizontal: spacing.xl,
+        borderRadius: radius.md,
+        borderWidth: 1,
+        borderColor: colors.gold + "40",
+        backgroundColor: colors.gold + "0a",
+    },
+
+    coinEstimateLabel: {
+        fontSize: 10,
+        letterSpacing: 2,
+        color: colors.gold + "80",
+        marginBottom: spacing.xs,
+    },
+
+    coinEstimateValue: {
+        fontSize: 28,
+        fontWeight: "200" as const,
+        letterSpacing: 4,
+        color: colors.gold,
+    },
+
+    coinEstimateHint: {
+        fontSize: 10,
+        letterSpacing: 1,
+        color: colors.gold + "60",
+        marginTop: spacing.xs,
     },
 });

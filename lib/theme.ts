@@ -8,6 +8,7 @@ export const colors = {
     muted: "#5a5a72",
     danger: "#ff6b6b",
     success: "#6bffb8",
+    gold: "#f5c842",
 };
 
 export const typography = {

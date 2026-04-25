@@ -39,10 +39,10 @@ export default function Stats() {
                     <Text
                         style={[
                             typography.body,
-                            { color: colors.accent, fontWeight: "300" },
+                            { color: colors.gold, fontWeight: "300" },
                         ]}
                     >
-                        {Math.round(item.score)}
+                        🪙 {Math.round(item.score).toLocaleString()}
                     </Text>
                 </View>
                 <Text style={[typography.caption]}>

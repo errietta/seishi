@@ -14,7 +14,7 @@ import Spacer from "../components/ui/Spacer";
 import ConcentrationSlider from "../components/ConcentrationSlider";
 import { useSessionStore } from "../lib/store/sessionStore";
 import { useStreakStore } from "../lib/store/streakStore";
-import { calculateScore } from "../lib/scoring/scoreCalculator";
+import { calculateCoins } from "../lib/scoring/scoreCalculator";
 import { getRandomMessage } from "../lib/i18n";
 import { colors, spacing, typography } from "../lib/theme";
 
@@ -28,7 +28,13 @@ export default function SessionComplete() {
 
     const devMode = useStreakStore((s) => s.devMode);
 
-    const score = calculateScore(session.pickups, streak.currentStreak);
+    const coins = calculateCoins({
+        pickups: session.pickups,
+        streakDays: streak.currentStreak,
+        durationSeconds: session.duration,
+        mode: session.mode!,
+        punishmentMode: session.punishmentMode,
+    });
     const message = useRef(getRandomMessage(streak.tone, "complete")).current;
     const challengeMinutes = useRef(Math.floor(Math.random() * 10) + 1).current;
     const challengeMessage = useRef(
@@ -48,7 +54,7 @@ export default function SessionComplete() {
         if (!savedRef.current && session.mode) {
             savedRef.current = true;
             await streak.recordSession({
-                score,
+                score: coins,
                 concentration,
                 mode: session.mode,
                 duration: session.duration,
@@ -91,8 +97,8 @@ export default function SessionComplete() {
                     <Text style={[typography.caption]}>
                         {t("complete.score")}
                     </Text>
-                    <Text style={[typography.hero, { color: colors.accent }]}>
-                        {Math.round(score)}
+                    <Text style={[typography.hero, { color: colors.gold }]}>
+                        🪙 {coins.toLocaleString()}
                     </Text>
                 </Animated.View>
 
