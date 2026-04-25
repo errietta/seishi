@@ -17,6 +17,9 @@ const TONE_KEY = "seishi_tone";
 const DEV_MODE_KEY = "seishi_devmode";
 const SHOW_WELCOME_KEY = "seishi_show_welcome";
 const SHOW_TIPS_KEY = "seishi_show_tips";
+const NOTIFICATIONS_ENABLED_KEY = "seishi_notifications_enabled";
+const NOTIFICATIONS_HOUR_KEY = "seishi_notifications_hour";
+const NOTIFICATIONS_MINUTE_KEY = "seishi_notifications_minute";
 const GRACE_HOURS = 2;
 
 function isConsecutiveDay(lastDateStr: string, now: Date): boolean {
@@ -35,6 +38,9 @@ interface StreakState {
     showWelcome: boolean;
     showSessionTips: boolean;
     initialized: boolean;
+    notificationsEnabled: boolean;
+    notificationHour: number;
+    notificationMinute: number;
     initialize: () => Promise<void>;
     recordSession: (record: Omit<SessionRecord, "date">) => Promise<void>;
     setTone: (tone: "strict" | "encouraging") => void;
@@ -42,6 +48,8 @@ interface StreakState {
     setShowWelcome: (v: boolean) => void;
     setShowSessionTips: (v: boolean) => void;
     resetHints: () => void;
+    setNotificationsEnabled: (v: boolean) => void;
+    setNotificationTime: (hour: number, minute: number) => void;
 }
 
 export const useStreakStore = create<StreakState>((set, get) => ({
@@ -53,17 +61,31 @@ export const useStreakStore = create<StreakState>((set, get) => ({
     showWelcome: true,
     showSessionTips: true,
     initialized: false,
+    notificationsEnabled: false,
+    notificationHour: 8,
+    notificationMinute: 0,
 
     initialize: async () => {
         try {
-            const [streakRaw, tone, devModeRaw, showWelcomeRaw, showTipsRaw] =
-                await Promise.all([
-                    AsyncStorage.getItem(STREAK_KEY),
-                    AsyncStorage.getItem(TONE_KEY),
-                    AsyncStorage.getItem(DEV_MODE_KEY),
-                    AsyncStorage.getItem(SHOW_WELCOME_KEY),
-                    AsyncStorage.getItem(SHOW_TIPS_KEY),
-                ]);
+            const [
+                streakRaw,
+                tone,
+                devModeRaw,
+                showWelcomeRaw,
+                showTipsRaw,
+                notificationsEnabledRaw,
+                notificationHourRaw,
+                notificationMinuteRaw,
+            ] = await Promise.all([
+                AsyncStorage.getItem(STREAK_KEY),
+                AsyncStorage.getItem(TONE_KEY),
+                AsyncStorage.getItem(DEV_MODE_KEY),
+                AsyncStorage.getItem(SHOW_WELCOME_KEY),
+                AsyncStorage.getItem(SHOW_TIPS_KEY),
+                AsyncStorage.getItem(NOTIFICATIONS_ENABLED_KEY),
+                AsyncStorage.getItem(NOTIFICATIONS_HOUR_KEY),
+                AsyncStorage.getItem(NOTIFICATIONS_MINUTE_KEY),
+            ]);
             const data = streakRaw ? JSON.parse(streakRaw) : {};
             set({
                 ...data,
@@ -72,6 +94,13 @@ export const useStreakStore = create<StreakState>((set, get) => ({
                 // null = never stored (first launch) → show it
                 showWelcome: showWelcomeRaw !== "0",
                 showSessionTips: showTipsRaw !== "0",
+                notificationsEnabled: notificationsEnabledRaw === "1",
+                notificationHour: notificationHourRaw
+                    ? parseInt(notificationHourRaw, 10)
+                    : 8,
+                notificationMinute: notificationMinuteRaw
+                    ? parseInt(notificationMinuteRaw, 10)
+                    : 0,
                 initialized: true,
             });
         } catch {
@@ -142,5 +171,24 @@ export const useStreakStore = create<StreakState>((set, get) => ({
         set({ showWelcome: true, showSessionTips: true });
         AsyncStorage.setItem(SHOW_WELCOME_KEY, "1").catch(() => {});
         AsyncStorage.setItem(SHOW_TIPS_KEY, "1").catch(() => {});
+    },
+
+    setNotificationsEnabled: (v) => {
+        set({ notificationsEnabled: v });
+        AsyncStorage.setItem(NOTIFICATIONS_ENABLED_KEY, v ? "1" : "0").catch(
+            () => {},
+        );
+    },
+
+    setNotificationTime: (hour, minute) => {
+        set({ notificationHour: hour, notificationMinute: minute });
+        AsyncStorage.setItem(
+            NOTIFICATIONS_HOUR_KEY,
+            String(hour),
+        ).catch(() => {});
+        AsyncStorage.setItem(
+            NOTIFICATIONS_MINUTE_KEY,
+            String(minute),
+        ).catch(() => {});
     },
 }));

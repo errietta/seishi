@@ -1,5 +1,13 @@
-import React from "react";
-import { StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import {
+    Alert,
+    StyleSheet,
+    Switch,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import Screen from "../components/ui/Screen";
@@ -9,6 +17,11 @@ import { useStreakStore } from "../lib/store/streakStore";
 import { useShopStore } from "../lib/store/shopStore";
 import { DEV_MODE_AVAILABLE } from "../lib/config";
 import { colors, spacing, typography } from "../lib/theme";
+import {
+    requestNotificationPermission,
+    scheduleDailyReminder,
+    cancelDailyReminder,
+} from "../lib/notifications";
 
 export default function Settings() {
     const { t } = useTranslation();
@@ -22,6 +35,53 @@ export default function Settings() {
     const showSessionTips = useStreakStore((s) => s.showSessionTips);
     const resetHints = useStreakStore((s) => s.resetHints);
     const hintsOff = !showWelcome || !showSessionTips;
+
+    const notificationsEnabled = useStreakStore(
+        (s) => s.notificationsEnabled,
+    );
+    const notificationHour = useStreakStore((s) => s.notificationHour);
+    const notificationMinute = useStreakStore((s) => s.notificationMinute);
+    const setNotificationsEnabled = useStreakStore(
+        (s) => s.setNotificationsEnabled,
+    );
+    const setNotificationTime = useStreakStore((s) => s.setNotificationTime);
+
+    const [showPicker, setShowPicker] = useState(false);
+
+    const notificationDate = new Date();
+    notificationDate.setHours(notificationHour, notificationMinute, 0, 0);
+
+    const timeLabel =
+        `${String(notificationHour).padStart(2, "0")}:${String(notificationMinute).padStart(2, "0")}`;
+
+    function handleTimeChange(_: unknown, selected?: Date) {
+        setShowPicker(false);
+        if (!selected) return;
+        const h = selected.getHours();
+        const m = selected.getMinutes();
+        setNotificationTime(h, m);
+        if (notificationsEnabled) {
+            scheduleDailyReminder(h, m);
+        }
+    }
+
+    async function handleToggleNotifications(value: boolean) {
+        if (value) {
+            const granted = await requestNotificationPermission();
+            if (!granted) {
+                Alert.alert(
+                    t("settings.notifications"),
+                    t("settings.notificationsPermissionDenied"),
+                );
+                return;
+            }
+            setNotificationsEnabled(true);
+            scheduleDailyReminder(notificationHour, notificationMinute);
+        } else {
+            setNotificationsEnabled(false);
+            cancelDailyReminder();
+        }
+    }
 
     return (
         <Screen>
@@ -123,6 +183,57 @@ export default function Settings() {
                         </Card>
                     </>
                 )}
+
+                <Spacer size={spacing.md} />
+                <Card>
+                    <View style={styles.row}>
+                        <View style={{ flex: 1 }}>
+                            <Text style={[typography.caption]}>
+                                {t("settings.notifications")}
+                            </Text>
+                            <Spacer size={spacing.xs} />
+                            <Text
+                                style={[
+                                    typography.caption,
+                                    { color: colors.muted },
+                                ]}
+                            >
+                                {t("settings.notificationsDesc")}
+                            </Text>
+                        </View>
+                        <Switch
+                            value={notificationsEnabled}
+                            onValueChange={handleToggleNotifications}
+                            trackColor={{
+                                false: colors.muted,
+                                true: colors.accent,
+                            }}
+                            thumbColor={colors.text}
+                        />
+                    </View>
+
+                    {notificationsEnabled && (
+                        <>
+                            <Spacer size={spacing.md} />
+                            <View style={styles.row}>
+                                <Text style={[typography.caption, { flex: 1 }]}>
+                                    {t("settings.notificationsTime")}
+                                </Text>
+                                <TouchableOpacity onPress={() => setShowPicker(true)}>
+                                    <Text style={styles.timeLabel}>{timeLabel}</Text>
+                                </TouchableOpacity>
+                            </View>
+                            {showPicker && (
+                                <DateTimePicker
+                                    mode="time"
+                                    value={notificationDate}
+                                    onChange={handleTimeChange}
+                                    display="default"
+                                />
+                            )}
+                        </>
+                    )}
+                </Card>
 
                 {DEV_MODE_AVAILABLE && (
                     <>
@@ -288,4 +399,12 @@ const styles = StyleSheet.create({
         letterSpacing: 2,
         color: colors.accent,
     },
+
+    timeLabel: {
+        fontSize: 18,
+        fontWeight: "200" as const,
+        letterSpacing: 2,
+        color: colors.accent,
+    },
+
 });
