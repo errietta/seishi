@@ -10,14 +10,14 @@ import ScoldOverlay from '../components/ScoldOverlay'
 import { useSessionStore, PUNISHMENT_SECONDS, PUNISHMENT_SECONDS_LONG } from '../lib/store/sessionStore'
 import { useStreakStore } from '../lib/store/streakStore'
 import { createPickupDetector, type PickupCause } from '../lib/sensors/pickupDetector'
-import { playAmbient, stopAmbient, playGong } from '../lib/audio/ambientPlayer'
+import { playAmbient, stopAmbient } from '../lib/audio/ambientPlayer'
 import { getRandomMessage } from '../lib/i18n'
 import { colors, spacing, typography } from '../lib/theme'
 import type { SoundKey } from '../lib/audio/ambientPlayer'
 
 const KEEP_AWAKE_TAG = 'session'
 const GRACE_SECONDS = 10
-const BRIGHTNESS_DIM_VALUE = 0.2
+const BRIGHTNESS_DIM_VALUE = 0.05
 
 export default function Session() {
   const { t } = useTranslation()
@@ -42,7 +42,9 @@ export default function Session() {
     if (timerRef.current) clearInterval(timerRef.current)
     detector.current.stop()
     await stopAmbient()
-    if (session.gongOnComplete) await playGong()
+    if (session.gongOnComplete) {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {})
+    }
     KeepAwake.deactivateKeepAwake(KEEP_AWAKE_TAG)
     if (originalBrightness.current !== null) {
       await Brightness.setBrightnessAsync(originalBrightness.current).catch(() => {})
