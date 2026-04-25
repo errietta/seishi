@@ -7,6 +7,7 @@ import Button from "../components/ui/Button";
 import Spacer from "../components/ui/Spacer";
 import PresenceOrb from "../components/PresenceOrb";
 import StreakDisplay from "../components/StreakDisplay";
+import HintModal, { HintTip } from "../components/HintModal";
 import { useStreakStore } from "../lib/store/streakStore";
 import { colors, spacing, typography } from "../lib/theme";
 
@@ -14,6 +15,8 @@ export default function Home() {
     const { t } = useTranslation();
     const streak = useStreakStore((s) => s.currentStreak);
     const history = useStreakStore((s) => s.history);
+    const showWelcome = useStreakStore((s) => s.showWelcome);
+    const setShowWelcome = useStreakStore((s) => s.setShowWelcome);
     const lastScore = history[0]?.score;
     const totalPoints = Math.round(
         history.reduce((sum, r) => sum + r.score, 0),
@@ -112,6 +115,16 @@ export default function Home() {
                 />
                 <Spacer size={spacing.lg} />
             </View>
+            <HintModal
+                visible={showWelcome}
+                title={t("hints.welcomeTitle")}
+                buttonLabel={t("hints.welcomeDismiss")}
+                onDismiss={(showAgain) => setShowWelcome(showAgain)}
+            >
+                <HintTip>{t("hints.welcome1")}</HintTip>
+                <HintTip>{t("hints.welcome2")}</HintTip>
+                <HintTip>{t("hints.welcome3")}</HintTip>
+            </HintModal>
         </Screen>
     );
 }

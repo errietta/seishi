@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 
 import PresenceOrb from "../components/PresenceOrb";
 import ScoldOverlay from "../components/ScoldOverlay";
+import HintModal, { HintTip } from "../components/HintModal";
 import {
     useSessionStore,
     PUNISHMENT_SECONDS,
@@ -31,6 +32,8 @@ export default function Session() {
     const { t } = useTranslation();
     const session = useSessionStore();
     const tone = useStreakStore((s) => s.tone);
+    const showSessionTips = useStreakStore((s) => s.showSessionTips);
+    const setShowSessionTips = useStreakStore((s) => s.setShowSessionTips);
 
     const [graceRemaining, setGraceRemaining] = useState(GRACE_SECONDS);
     const [graceMessage] = useState(() => getRandomMessage(tone, "grace"));
@@ -258,6 +261,18 @@ export default function Session() {
                 penaltyLabel={penaltyLabel}
                 onResume={handleResume}
             />
+
+            <HintModal
+                visible={showSessionTips}
+                title={t("hints.tipsTitle")}
+                buttonLabel={t("hints.tipsDismiss")}
+                onDismiss={(showAgain) => setShowSessionTips(showAgain)}
+            >
+                <HintTip>{t("hints.tips1")}</HintTip>
+                <HintTip>{t("hints.tips2")}</HintTip>
+                <HintTip>{t("hints.tips3")}</HintTip>
+                <HintTip>{t("hints.tips4")}</HintTip>
+            </HintModal>
         </View>
     );
 }

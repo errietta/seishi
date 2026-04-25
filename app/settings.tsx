@@ -15,6 +15,10 @@ export default function Settings() {
     const setTone = useStreakStore((s) => s.setTone);
     const devMode = useStreakStore((s) => s.devMode);
     const setDevMode = useStreakStore((s) => s.setDevMode);
+    const showWelcome = useStreakStore((s) => s.showWelcome);
+    const showSessionTips = useStreakStore((s) => s.showSessionTips);
+    const resetHints = useStreakStore((s) => s.resetHints);
+    const hintsOff = !showWelcome || !showSessionTips;
 
     return (
         <Screen>
@@ -85,6 +89,38 @@ export default function Settings() {
                     </Text>
                 </Card>
 
+                {hintsOff && (
+                    <>
+                        <Spacer size={spacing.md} />
+                        <Card>
+                            <View style={styles.row}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={[typography.caption]}>
+                                        {t("settings.hints")}
+                                    </Text>
+                                    <Spacer size={spacing.xs} />
+                                    <Text
+                                        style={[
+                                            typography.caption,
+                                            { color: colors.muted },
+                                        ]}
+                                    >
+                                        {t("settings.hintsDesc")}
+                                    </Text>
+                                </View>
+                                <TouchableOpacity
+                                    onPress={resetHints}
+                                    style={styles.resetButton}
+                                >
+                                    <Text style={styles.resetLabel}>
+                                        {t("settings.hintsReset")}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </Card>
+                    </>
+                )}
+
                 {DEV_MODE_AVAILABLE && (
                     <>
                         <Spacer size={spacing.md} />
@@ -150,5 +186,19 @@ const styles = StyleSheet.create({
     devCard: {
         borderWidth: 1,
         borderColor: colors.danger + "44",
+    },
+
+    resetButton: {
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.md,
+        borderRadius: 999,
+        borderWidth: 1,
+        borderColor: colors.accent + "66",
+    },
+
+    resetLabel: {
+        fontSize: 11,
+        letterSpacing: 2,
+        color: colors.accent,
     },
 });

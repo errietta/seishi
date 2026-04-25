@@ -14,6 +14,8 @@ export interface SessionRecord {
 const STREAK_KEY = "seishi_streak";
 const TONE_KEY = "seishi_tone";
 const DEV_MODE_KEY = "seishi_devmode";
+const SHOW_WELCOME_KEY = "seishi_show_welcome";
+const SHOW_TIPS_KEY = "seishi_show_tips";
 const GRACE_HOURS = 2;
 
 function isConsecutiveDay(lastDateStr: string, now: Date): boolean {
@@ -29,11 +31,16 @@ interface StreakState {
     history: SessionRecord[];
     tone: "strict" | "encouraging";
     devMode: boolean;
+    showWelcome: boolean;
+    showSessionTips: boolean;
     initialized: boolean;
     initialize: () => Promise<void>;
     recordSession: (record: Omit<SessionRecord, "date">) => Promise<void>;
     setTone: (tone: "strict" | "encouraging") => void;
     setDevMode: (on: boolean) => void;
+    setShowWelcome: (v: boolean) => void;
+    setShowSessionTips: (v: boolean) => void;
+    resetHints: () => void;
 }
 
 export const useStreakStore = create<StreakState>((set, get) => ({
@@ -42,20 +49,28 @@ export const useStreakStore = create<StreakState>((set, get) => ({
     history: [],
     tone: "strict",
     devMode: false,
+    showWelcome: true,
+    showSessionTips: true,
     initialized: false,
 
     initialize: async () => {
         try {
-            const [streakRaw, tone, devModeRaw] = await Promise.all([
-                AsyncStorage.getItem(STREAK_KEY),
-                AsyncStorage.getItem(TONE_KEY),
-                AsyncStorage.getItem(DEV_MODE_KEY),
-            ]);
+            const [streakRaw, tone, devModeRaw, showWelcomeRaw, showTipsRaw] =
+                await Promise.all([
+                    AsyncStorage.getItem(STREAK_KEY),
+                    AsyncStorage.getItem(TONE_KEY),
+                    AsyncStorage.getItem(DEV_MODE_KEY),
+                    AsyncStorage.getItem(SHOW_WELCOME_KEY),
+                    AsyncStorage.getItem(SHOW_TIPS_KEY),
+                ]);
             const data = streakRaw ? JSON.parse(streakRaw) : {};
             set({
                 ...data,
                 tone: (tone as "strict" | "encouraging") ?? "strict",
                 devMode: devModeRaw === "1",
+                // null = never stored (first launch) → show it
+                showWelcome: showWelcomeRaw !== "0",
+                showSessionTips: showTipsRaw !== "0",
                 initialized: true,
             });
         } catch {
@@ -105,5 +120,21 @@ export const useStreakStore = create<StreakState>((set, get) => ({
     setDevMode: (on) => {
         set({ devMode: on });
         AsyncStorage.setItem(DEV_MODE_KEY, on ? "1" : "0").catch(() => {});
+    },
+
+    setShowWelcome: (v) => {
+        set({ showWelcome: v });
+        AsyncStorage.setItem(SHOW_WELCOME_KEY, v ? "1" : "0").catch(() => {});
+    },
+
+    setShowSessionTips: (v) => {
+        set({ showSessionTips: v });
+        AsyncStorage.setItem(SHOW_TIPS_KEY, v ? "1" : "0").catch(() => {});
+    },
+
+    resetHints: () => {
+        set({ showWelcome: true, showSessionTips: true });
+        AsyncStorage.setItem(SHOW_WELCOME_KEY, "1").catch(() => {});
+        AsyncStorage.setItem(SHOW_TIPS_KEY, "1").catch(() => {});
     },
 }));

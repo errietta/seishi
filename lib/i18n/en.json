@@ -88,7 +88,24 @@
         "toneStrict": "Strict",
         "toneEncouraging": "Encouraging",
         "graceperiod": "STREAK GRACE PERIOD",
-        "graceperiodHint": "hours before midnight"
+        "graceperiodHint": "hours before midnight",
+        "hints": "HINTS",
+        "hintsDesc": "Welcome screen and session tips are hidden.",
+        "hintsReset": "RESET"
+    },
+    "hints": {
+        "welcomeTitle": "WELCOME",
+        "welcomeDismiss": "GOT IT",
+        "welcome1": "Put your phone face down and sit in stillness. The app watches — every time you pick it up or switch away, you'll be called back.",
+        "welcome2": "Complete sessions to build your daily streak and earn coins. Harder modes, longer sessions, and tougher punishments reward more.",
+        "welcome3": "Choose a duration and punishment in session setup. The orb breathes with you during the session — watch it, and be still.",
+        "tipsTitle": "BEFORE YOU BEGIN",
+        "tipsDismiss": "LET'S GO",
+        "tips1": "Count slowly from 1 to 10 in your head, then back to 1. Let the count be your anchor.",
+        "tips2": "Breathe naturally. Notice each inhale and exhale without trying to control them.",
+        "tips3": "When thoughts arise, don't fight them — notice them, then gently return to your count or your breath.",
+        "tips4": "There is nothing to do right now. Just be here.",
+        "showAgain": "show again next time"
     },
     "messages": {
         "strict": {
