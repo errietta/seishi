@@ -9,26 +9,42 @@ import PresenceOrb from "../components/PresenceOrb";
 import StreakDisplay from "../components/StreakDisplay";
 import HintModal, { HintTip } from "../components/HintModal";
 import { useStreakStore } from "../lib/store/streakStore";
+import { useShopStore } from "../lib/store/shopStore";
+import { CATALOG } from "../lib/shop/catalog";
 import { colors, spacing, typography } from "../lib/theme";
 
 export default function Home() {
     const { t } = useTranslation();
+
     const streak = useStreakStore((s) => s.currentStreak);
     const history = useStreakStore((s) => s.history);
     const showWelcome = useStreakStore((s) => s.showWelcome);
     const setShowWelcome = useStreakStore((s) => s.setShowWelcome);
+
+    const purchases = useShopStore((s) => s.purchases);
+    const activeOrbTheme = useShopStore((s) => s.activeOrbTheme);
+    const activeTitle = useShopStore((s) => s.activeTitle);
+
     const lastScore = history[0]?.score;
-    const totalPoints = Math.round(
-        history.reduce((sum, r) => sum + r.score, 0),
-    );
+    const earned = Math.round(history.reduce((sum, r) => sum + r.score, 0));
+    const spent = purchases.reduce((sum, p) => sum + p.cost, 0);
+    const balance = earned - spent;
+
+    const activeOrbItem = activeOrbTheme
+        ? CATALOG.find((c) => c.id === activeOrbTheme)
+        : null;
+    const activeTitleItem = activeTitle
+        ? CATALOG.find((c) => c.id === activeTitle)
+        : null;
 
     return (
         <Screen>
             <View style={styles.container}>
-                {/* Top nav */}
+
+                {/* ── top nav ── */}
                 <View style={styles.topNav}>
                     <TouchableOpacity
-                        onPress={() => router.push("/stats")}
+                        onPress={() => router.push("/shop")}
                         style={styles.navButton}
                     >
                         <Text
@@ -37,11 +53,11 @@ export default function Home() {
                                 { color: colors.muted },
                             ]}
                         >
-                            RECORD
+                            {t("shop.title")}
                         </Text>
-                        {totalPoints > 0 && (
+                        {balance > 0 && (
                             <Text style={styles.walletLabel}>
-                                🪙 {totalPoints.toLocaleString()}
+                                🪙 {balance.toLocaleString()}
                             </Text>
                         )}
                     </TouchableOpacity>
@@ -60,7 +76,7 @@ export default function Home() {
                     </TouchableOpacity>
                 </View>
 
-                {/* Title */}
+                {/* ── title ── */}
                 <View style={styles.titleBlock}>
                     <Text style={[typography.hero, { color: colors.text }]}>
                         {t("home.title")}
@@ -73,17 +89,24 @@ export default function Home() {
                     >
                         {t("home.subtitle")}
                     </Text>
+                    {activeTitleItem && (
+                        <Text style={styles.titleBadge}>
+                            {activeTitleItem.titleText}
+                        </Text>
+                    )}
                 </View>
 
-                {/* Orb */}
+                {/* ── orb ── */}
                 <View style={styles.orbArea}>
                     <PresenceOrb
                         phase="idle"
                         size={110}
+                        orbCoreColor={activeOrbItem?.orbColors?.core}
+                        orbGlowColor={activeOrbItem?.orbColors?.glow}
                     />
                 </View>
 
-                {/* Stats */}
+                {/* ── stats ── */}
                 <View style={styles.statsBlock}>
                     {streak > 0 ? (
                         <StreakDisplay streak={streak} />
@@ -104,7 +127,8 @@ export default function Home() {
                                 { marginTop: spacing.sm },
                             ]}
                         >
-                            {t("home.lastScore")}: 🪙 {Math.round(lastScore).toLocaleString()}
+                            {t("home.lastScore")}: 🪙{" "}
+                            {Math.round(lastScore).toLocaleString()}
                         </Text>
                     )}
                 </View>
@@ -115,6 +139,7 @@ export default function Home() {
                 />
                 <Spacer size={spacing.lg} />
             </View>
+
             <HintModal
                 visible={showWelcome}
                 title={t("hints.welcomeTitle")}
@@ -135,23 +160,35 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingHorizontal: spacing.xl,
     },
+
     topNav: {
         flexDirection: "row",
         justifyContent: "space-between",
         width: "100%",
     },
+
     navButton: {
         padding: spacing.md,
     },
+
     titleBlock: {
         alignItems: "center",
     },
+
+    titleBadge: {
+        ...typography.caption,
+        color: colors.gold,
+        letterSpacing: 3,
+        marginTop: spacing.xs,
+    },
+
     orbArea: {
         flex: 1,
         maxHeight: 180,
         alignItems: "center",
         justifyContent: "center",
     },
+
     statsBlock: {
         alignItems: "center",
         marginBottom: spacing.lg,

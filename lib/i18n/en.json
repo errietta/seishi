@@ -227,5 +227,24 @@
                 "You already know how. Do it once more."
             ]
         }
+    },
+    "shop": {
+        "title": "SHOP",
+        "balance": "BALANCE",
+        "earned": "earned",
+        "spent": "spent",
+        "sounds": "SOUNDS",
+        "orbThemes": "ORB THEMES",
+        "consumables": "CONSUMABLES",
+        "titles": "TITLES",
+        "coinHistory": "COIN HISTORY",
+        "record": "RECORD",
+        "buy": "BUY",
+        "owned": "OWNED",
+        "active": "ACTIVE",
+        "equip": "EQUIP",
+        "unequip": "UNEQUIP",
+        "session": "session complete",
+        "notEnough": "not enough coins"
     }
 }

@@ -18,6 +18,8 @@ interface Props {
     joltTrigger?: number;
     size?: number;
     angry?: boolean;
+    orbCoreColor?: string;
+    orbGlowColor?: string;
 }
 
 export default function PresenceOrb({
@@ -25,6 +27,8 @@ export default function PresenceOrb({
     joltTrigger = 0,
     size = 160,
     angry = false,
+    orbCoreColor = colors.orbCore,
+    orbGlowColor = colors.orbGlow,
 }: Props) {
     const scale = useSharedValue(1);
     const coreOpacity = useSharedValue(0.6);
@@ -159,12 +163,12 @@ export default function PresenceOrb({
         backgroundColor: interpolateColor(
             angryProgress.value,
             [0, 1],
-            [colors.orbCore, colors.danger],
+            [orbCoreColor, colors.danger],
         ),
         shadowColor: interpolateColor(
             angryProgress.value,
             [0, 1],
-            [colors.orbGlow, colors.danger],
+            [orbGlowColor, colors.danger],
         ),
     }));
 
@@ -172,7 +176,7 @@ export default function PresenceOrb({
         backgroundColor: interpolateColor(
             angryProgress.value,
             [0, 1],
-            [colors.orbGlow, colors.danger],
+            [orbGlowColor, colors.danger],
         ),
     }));
 
@@ -180,7 +184,7 @@ export default function PresenceOrb({
         backgroundColor: interpolateColor(
             angryProgress.value,
             [0, 1],
-            [colors.orbCore, colors.danger],
+            [orbCoreColor, colors.danger],
         ),
     }));
 
@@ -252,7 +256,7 @@ export default function PresenceOrb({
                             width: size * 0.3,
                             height: size * 0.2,
                             borderRadius: size * 0.1,
-                            backgroundColor: colors.orbGlow,
+                            backgroundColor: orbGlowColor,
                             opacity: 0.6,
                         }}
                     />

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { Mode } from "./sessionStore";
+import { useShopStore } from "./shopStore";
 
 export interface SessionRecord {
     date: string;
@@ -98,7 +99,12 @@ export const useStreakStore = create<StreakState>((set, get) => ({
         } else if (isConsecutiveDay(last, now)) {
             streak += 1;
         } else {
-            streak = 1;
+            const shop = useShopStore.getState();
+            if (shop.streakFreezes > 0) {
+                shop.useStreakFreeze();
+            } else {
+                streak = 1;
+            }
         }
 
         const entry: SessionRecord = { ...record, date: now.toISOString() };

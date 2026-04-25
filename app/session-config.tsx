@@ -18,13 +18,15 @@ import {
     type PunishmentMode,
 } from "../lib/store/sessionStore";
 import { useStreakStore } from "../lib/store/streakStore";
+import { useShopStore } from "../lib/store/shopStore";
+import { CATALOG } from "../lib/shop/catalog";
 import { calculateCoins } from "../lib/scoring/scoreCalculator";
 import { colors, radius, spacing, typography } from "../lib/theme";
 
 const DURATIONS = [5, 10, 15, 20];
 const SPICY_MINS = [5, 7, 10, 12];
 const SPICY_MAXS = [10, 15, 20, 30];
-const SOUNDS = ["none", "rain", "whitenoise", "singingbowl"] as const;
+const BASE_SOUNDS = ["none", "rain", "whitenoise", "singingbowl"];
 
 export default function SessionConfig() {
     const { t } = useTranslation();
@@ -32,6 +34,14 @@ export default function SessionConfig() {
     const startSession = useSessionStore((s) => s.startSession);
     const devMode = useStreakStore((s) => s.devMode);
     const streak = useStreakStore((s) => s.currentStreak);
+    const ownedItems = useShopStore((s) => s.ownedItems);
+
+    const availableSounds = [
+        ...BASE_SOUNDS,
+        ...CATALOG.filter(
+            (item) => item.type === "sound" && ownedItems.includes(item.id),
+        ).map((item) => item.soundKey!),
+    ];
 
     const [duration, setDuration] = useState(10);
     const [sound, setSound] = useState<string | null>(null);
@@ -44,7 +54,9 @@ export default function SessionConfig() {
         if (key === "none") return t("config.soundNone");
         if (key === "rain") return t("config.soundRain");
         if (key === "whitenoise") return t("config.soundWhiteNoise");
-        return t("config.soundSingingBowl");
+        if (key === "singingbowl") return t("config.soundSingingBowl");
+        const item = CATALOG.find((c) => c.soundKey === key);
+        return item ? item.name : key.toUpperCase();
     };
 
     function begin() {
@@ -160,7 +172,7 @@ export default function SessionConfig() {
                             </Text>
                             <Spacer size={spacing.md} />
                             <View style={styles.chipRow}>
-                                {SOUNDS.map((key) => (
+                                {availableSounds.map((key) => (
                                     <Chip
                                         key={key}
                                         label={soundLabel(key)}

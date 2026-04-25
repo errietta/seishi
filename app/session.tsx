@@ -15,6 +15,8 @@ import {
     PUNISHMENT_SECONDS_LONG,
 } from "../lib/store/sessionStore";
 import { useStreakStore } from "../lib/store/streakStore";
+import { useShopStore } from "../lib/store/shopStore";
+import { CATALOG } from "../lib/shop/catalog";
 import {
     createPickupDetector,
     type PickupCause,
@@ -34,6 +36,10 @@ export default function Session() {
     const tone = useStreakStore((s) => s.tone);
     const showSessionTips = useStreakStore((s) => s.showSessionTips);
     const setShowSessionTips = useStreakStore((s) => s.setShowSessionTips);
+    const activeOrbTheme = useShopStore((s) => s.activeOrbTheme);
+    const activeOrbItem = activeOrbTheme
+        ? CATALOG.find((c) => c.id === activeOrbTheme)
+        : null;
 
     const [graceRemaining, setGraceRemaining] = useState(GRACE_SECONDS);
     const [graceMessage] = useState(() => getRandomMessage(tone, "grace"));
@@ -222,6 +228,8 @@ export default function Session() {
                     joltTrigger={joltTrigger}
                     size={180}
                     angry={scoldVisible}
+                    orbCoreColor={activeOrbItem?.orbColors?.core}
+                    orbGlowColor={activeOrbItem?.orbColors?.glow}
                 />
 
                 {inGrace ? (
