@@ -28,7 +28,7 @@ import type { SoundKey } from "../lib/audio/ambientPlayer";
 
 const KEEP_AWAKE_TAG = "session";
 const GRACE_SECONDS = 10;
-const BRIGHTNESS_DIM_VALUE = 0.05;
+const BRIGHTNESS_DIM_VALUE = 0.02;
 
 export default function Session() {
     const { t } = useTranslation();
