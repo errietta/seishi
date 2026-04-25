@@ -91,7 +91,26 @@
         "graceperiodHint": "hours before midnight",
         "hints": "HINTS",
         "hintsDesc": "Welcome screen and session tips are hidden.",
-        "hintsReset": "RESET"
+        "hintsReset": "RESET",
+        "notifications": "DAILY REMINDER",
+        "notificationsDesc": "Get nudged to sit in stillness.",
+        "notificationsTime": "REMINDER TIME",
+        "notificationsPermissionDenied": "Enable notifications in your device settings to use this feature."
+    },
+    "notifications": {
+        "reminderTitle": "Time to be still.",
+        "reminderMessages": [
+            "Your cushion is waiting. Don't make it awkward.",
+            "The silence is ready. Are you?",
+            "Stop scrolling. Sit down. Breathe.",
+            "You said you'd meditate today. Clock's ticking.",
+            "One session. That's all. Go.",
+            "The world will still be chaotic later. Sit now.",
+            "Your streak won't protect itself.",
+            "Put the phone down. Seriously.",
+            "Five minutes of stillness. You owe yourself this.",
+            "It's time. You know it. Do it."
+        ]
     },
     "hints": {
         "welcomeTitle": "WELCOME",

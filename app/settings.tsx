@@ -1,5 +1,12 @@
-import React from "react";
-import { StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import {
+    Alert,
+    StyleSheet,
+    Switch,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import Screen from "../components/ui/Screen";
@@ -9,6 +16,11 @@ import { useStreakStore } from "../lib/store/streakStore";
 import { useShopStore } from "../lib/store/shopStore";
 import { DEV_MODE_AVAILABLE } from "../lib/config";
 import { colors, spacing, typography } from "../lib/theme";
+import {
+    requestNotificationPermission,
+    scheduleDailyReminder,
+    cancelDailyReminder,
+} from "../lib/notifications";
 
 export default function Settings() {
     const { t } = useTranslation();
@@ -22,6 +34,58 @@ export default function Settings() {
     const showSessionTips = useStreakStore((s) => s.showSessionTips);
     const resetHints = useStreakStore((s) => s.resetHints);
     const hintsOff = !showWelcome || !showSessionTips;
+
+    const notificationsEnabled = useStreakStore(
+        (s) => s.notificationsEnabled,
+    );
+    const notificationHour = useStreakStore((s) => s.notificationHour);
+    const notificationMinute = useStreakStore((s) => s.notificationMinute);
+    const setNotificationsEnabled = useStreakStore(
+        (s) => s.setNotificationsEnabled,
+    );
+    const setNotificationTime = useStreakStore((s) => s.setNotificationTime);
+
+    const [pendingHour, setPendingHour] = useState(notificationHour);
+    const [pendingMinute, setPendingMinute] = useState(notificationMinute);
+
+    function adjustHour(delta: number) {
+        const next = (pendingHour + delta + 24) % 24;
+        setPendingHour(next);
+        setNotificationTime(next, pendingMinute);
+        if (notificationsEnabled) {
+            scheduleDailyReminder(next, pendingMinute);
+        }
+    }
+
+    function adjustMinute(delta: number) {
+        const next = (pendingMinute + delta + 60) % 60;
+        setPendingMinute(next);
+        setNotificationTime(pendingHour, next);
+        if (notificationsEnabled) {
+            scheduleDailyReminder(pendingHour, next);
+        }
+    }
+
+    async function handleToggleNotifications(value: boolean) {
+        if (value) {
+            const granted = await requestNotificationPermission();
+            if (!granted) {
+                Alert.alert(
+                    t("settings.notifications"),
+                    t("settings.notificationsPermissionDenied"),
+                );
+                return;
+            }
+            setNotificationsEnabled(true);
+            scheduleDailyReminder(pendingHour, pendingMinute);
+        } else {
+            setNotificationsEnabled(false);
+            cancelDailyReminder();
+        }
+    }
+
+    const hourStr = String(pendingHour).padStart(2, "0");
+    const minuteStr = String(pendingMinute).padStart(2, "0");
 
     return (
         <Screen>
@@ -123,6 +187,90 @@ export default function Settings() {
                         </Card>
                     </>
                 )}
+
+                <Spacer size={spacing.md} />
+                <Card>
+                    <View style={styles.row}>
+                        <View style={{ flex: 1 }}>
+                            <Text style={[typography.caption]}>
+                                {t("settings.notifications")}
+                            </Text>
+                            <Spacer size={spacing.xs} />
+                            <Text
+                                style={[
+                                    typography.caption,
+                                    { color: colors.muted },
+                                ]}
+                            >
+                                {t("settings.notificationsDesc")}
+                            </Text>
+                        </View>
+                        <Switch
+                            value={notificationsEnabled}
+                            onValueChange={handleToggleNotifications}
+                            trackColor={{
+                                false: colors.muted,
+                                true: colors.accent,
+                            }}
+                            thumbColor={colors.text}
+                        />
+                    </View>
+
+                    {notificationsEnabled && (
+                        <>
+                            <Spacer size={spacing.md} />
+                            <Text style={[typography.caption]}>
+                                {t("settings.notificationsTime")}
+                            </Text>
+                            <Spacer size={spacing.sm} />
+                            <View style={styles.row}>
+                                <View style={styles.timePicker}>
+                                    <TouchableOpacity
+                                        onPress={() => adjustHour(1)}
+                                        style={styles.timeBtn}
+                                    >
+                                        <Text style={styles.timeBtnText}>
+                                            ▲
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <Text style={styles.timeValue}>
+                                        {hourStr}
+                                    </Text>
+                                    <TouchableOpacity
+                                        onPress={() => adjustHour(-1)}
+                                        style={styles.timeBtn}
+                                    >
+                                        <Text style={styles.timeBtnText}>
+                                            ▼
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <Text style={styles.timeSep}>:</Text>
+                                <View style={styles.timePicker}>
+                                    <TouchableOpacity
+                                        onPress={() => adjustMinute(5)}
+                                        style={styles.timeBtn}
+                                    >
+                                        <Text style={styles.timeBtnText}>
+                                            ▲
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <Text style={styles.timeValue}>
+                                        {minuteStr}
+                                    </Text>
+                                    <TouchableOpacity
+                                        onPress={() => adjustMinute(-5)}
+                                        style={styles.timeBtn}
+                                    >
+                                        <Text style={styles.timeBtnText}>
+                                            ▼
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </>
+                    )}
+                </Card>
 
                 {DEV_MODE_AVAILABLE && (
                     <>
@@ -287,5 +435,36 @@ const styles = StyleSheet.create({
         fontSize: 11,
         letterSpacing: 2,
         color: colors.accent,
+    },
+
+    timePicker: {
+        alignItems: "center",
+        gap: spacing.xs,
+    },
+
+    timeBtn: {
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.xs,
+    },
+
+    timeBtnText: {
+        fontSize: 12,
+        color: colors.accent,
+    },
+
+    timeValue: {
+        fontSize: 28,
+        fontWeight: "200" as const,
+        letterSpacing: 4,
+        color: colors.text,
+        minWidth: 48,
+        textAlign: "center",
+    },
+
+    timeSep: {
+        fontSize: 28,
+        fontWeight: "200" as const,
+        color: colors.muted,
+        marginBottom: spacing.xs,
     },
 });
