@@ -1,214 +1,214 @@
 {
-  "home": {
-    "title": "SEISHI",
-    "subtitle": "stillness",
-    "begin": "BEGIN",
-    "streakLabel": "day streak",
-    "lastScore": "last score",
-    "noStreak": "start your streak"
-  },
-  "modes": {
-    "title": "CHOOSE YOUR TRIAL",
-    "simple": {
-      "name": "SIMPLE",
-      "description": "Timer visible. Sound optional. Training wheels attached."
+    "home": {
+        "title": "SEISHI",
+        "subtitle": "stillness",
+        "begin": "BEGIN",
+        "streakLabel": "day streak",
+        "lastScore": "last score",
+        "noStreak": "start your streak"
     },
-    "raw": {
-      "name": "RAW",
-      "description": "No timer. No sound. Just you and the silence."
+    "modes": {
+        "title": "CHOOSE YOUR TRIAL",
+        "simple": {
+            "name": "SIMPLE",
+            "description": "Timer visible. Sound optional. Training wheels attached."
+        },
+        "raw": {
+            "name": "RAW",
+            "description": "No timer. No sound. Just you and the silence."
+        },
+        "spicy": {
+            "name": "SPICY",
+            "description": "You set the range. The app decides when you're done."
+        }
     },
-    "spicy": {
-      "name": "SPICY",
-      "description": "You set the range. The app decides when you're done."
+    "config": {
+        "duration": "DURATION",
+        "durationMinutes": "minutes",
+        "range": "SET YOUR RANGE",
+        "rangeMin": "minimum",
+        "rangeMax": "maximum",
+        "sound": "AMBIENT SOUND",
+        "soundNone": "None",
+        "soundRain": "Rain",
+        "soundWhiteNoise": "White Noise",
+        "soundSingingBowl": "Singing Bowl",
+        "gong": "VIBRATE ON COMPLETE",
+        "gongOn": "On",
+        "gongOff": "Off",
+        "punishment": "PUNISHMENT FOR LEAVING",
+        "punishmentNone": "None",
+        "punishmentAddTime": "+2 min",
+        "punishmentAddTimeLong": "+5 min",
+        "punishmentReset": "Reset timer",
+        "punishmentRandom": "?",
+        "begin": "BEGIN SESSION"
+    },
+    "session": {
+        "graceInstruction": "put your phone down",
+        "phaseIdle": "settle in",
+        "phaseActive": "breathe",
+        "phaseWinding": "almost there"
+    },
+    "scold": {
+        "resume": "I'M BACK, I SWEAR",
+        "penaltyAddTime": "+2:00 ADDED",
+        "penaltyAddTimeSilent": "TIME EXTENDED",
+        "penaltyAddTimeLong": "+5:00 ADDED",
+        "penaltyReset": "TIMER RESET"
+    },
+    "complete": {
+        "title": "SESSION COMPLETE",
+        "score": "SCORE",
+        "concentration": "HOW FOCUSED WERE YOU?",
+        "concentrationHint": "be honest",
+        "continue": "CONTINUE",
+        "pickups": "pickups",
+        "streakUpdate": "streak updated"
+    },
+    "stats": {
+        "title": "RECORD",
+        "streak": "CURRENT STREAK",
+        "avgConcentration": "AVG CONCENTRATION",
+        "history": "SESSIONS",
+        "empty": "No sessions yet. Begin.",
+        "noStreak": "no streak yet",
+        "focus": "focus",
+        "pickups": "pickups"
+    },
+    "challenge": {
+        "title": "OPTIONAL CHALLENGE",
+        "description": "stay completely still in silence for {{minutes}} minutes",
+        "accept": "ACCEPT",
+        "decline": "skip"
+    },
+    "settings": {
+        "title": "SETTINGS",
+        "tone": "SENSEI TONE",
+        "toneStrict": "Strict",
+        "toneEncouraging": "Encouraging",
+        "graceperiod": "STREAK GRACE PERIOD",
+        "graceperiodHint": "hours before midnight"
+    },
+    "messages": {
+        "strict": {
+            "grace": [
+                "I bet you can't do this.",
+                "Your phone misses you already.",
+                "Let's see how long this lasts.",
+                "You'll give up. You always do.",
+                "Prove me wrong. You won't.",
+                "I've seen better commitment from houseplants.",
+                "This will go poorly for you."
+            ],
+            "pickup": [
+                "Really? REALLY?",
+                "Disgraceful.",
+                "The phone calls to you and you answer like a dog.",
+                "I expected nothing and you still disappointed me.",
+                "Pathetic.",
+                "Five seconds. That is all it took.",
+                "You were doing so well. Now you are not."
+            ],
+            "appSwitch": [
+                "You LEFT. You actually LEFT.",
+                "The audacity. The sheer, breathtaking audacity.",
+                "I saw that. I see everything.",
+                "That was not an accident. You know what you did.",
+                "You chose Instagram over enlightenment. Reflect on that.",
+                "Coward.",
+                "Running away won't make your problems smaller. It will make your session longer.",
+                "You have summoned consequences.",
+                "Where did you go? DID IT HELP? NO. COME BACK.",
+                "I cannot believe you. And yet, here we are."
+            ],
+            "complete": [
+                "Acceptable. Do not celebrate.",
+                "You have done the bare minimum. Good.",
+                "Even a broken clock is right twice a day.",
+                "Fine. Go eat something.",
+                "I have seen worse. Barely.",
+                "You may go.",
+                "This will have to do."
+            ],
+            "streakBroken": [
+                "Streak lost. As expected.",
+                "The streak is dead. Begin again.",
+                "You had one job.",
+                "Disappointing but not surprising."
+            ],
+            "streakMilestone": [
+                "You persist. Fine.",
+                "Still here. I acknowledge this.",
+                "Consistency noted. Do not make it a personality.",
+                "The streak grows. So do my expectations."
+            ],
+            "challenge": [
+                "Bet you can't do this one.",
+                "Too scared? I thought so.",
+                "This will end poorly for you. Do it anyway.",
+                "You won't. But try.",
+                "One more. Unless you're afraid.",
+                "You're going to say no. Prove me wrong."
+            ]
+        },
+        "encouraging": {
+            "grace": [
+                "You've got this.",
+                "Everything else can wait.",
+                "You showed up. That already means something.",
+                "Breathe. You know how to do this.",
+                "This moment is yours.",
+                "Leave the world outside for a while.",
+                "Ten seconds. Just ten seconds."
+            ],
+            "pickup": [
+                "Hey, it happens. Come back.",
+                "The mind wanders. That's normal. Return.",
+                "You noticed. That's the practice.",
+                "No judgment. Just breathe.",
+                "It's okay. Start again.",
+                "Phones are designed to distract. You're fighting that. Come back.",
+                "One interruption doesn't ruin the session."
+            ],
+            "appSwitch": [
+                "Hey — you stepped away intentionally. That's okay. Come back.",
+                "You left. The door is still open. Return.",
+                "The pull is strong. You felt it. Now return.",
+                "That was a deliberate choice. This is a better one.",
+                "Noticed. It's okay. What matters is you're back.",
+                "The world waited. It'll keep waiting. You're here now.",
+                "You went somewhere else. That somewhere isn't going anywhere. Come back."
+            ],
+            "complete": [
+                "Beautiful. You showed up.",
+                "That took courage. Well done.",
+                "Every session counts. This one counted.",
+                "You did the hard thing. That's everything.",
+                "Look at you. Still here, still trying.",
+                "The fact you finished means something.",
+                "That was real practice. Be proud."
+            ],
+            "streakBroken": [
+                "Rest is part of the practice. Begin again.",
+                "Streaks end. New ones begin. Today.",
+                "It's okay. You know the way back.",
+                "Tomorrow is a new start."
+            ],
+            "streakMilestone": [
+                "Look how far you've come.",
+                "Consistency is the whole game. You're playing it.",
+                "This streak is real. You built it.",
+                "Day by day. That's how it works."
+            ],
+            "challenge": [
+                "One more round? You've got it in you.",
+                "Think you can go deeper? Try.",
+                "This one's shorter. You can do it.",
+                "The stillness is still there. Go find it again.",
+                "You're warm. Keep going.",
+                "You already know how. Do it once more."
+            ]
+        }
     }
-  },
-  "config": {
-    "duration": "DURATION",
-    "durationMinutes": "minutes",
-    "range": "SET YOUR RANGE",
-    "rangeMin": "minimum",
-    "rangeMax": "maximum",
-    "sound": "AMBIENT SOUND",
-    "soundNone": "None",
-    "soundRain": "Rain",
-    "soundWhiteNoise": "White Noise",
-    "soundSingingBowl": "Singing Bowl",
-    "gong": "VIBRATE ON COMPLETE",
-    "gongOn": "On",
-    "gongOff": "Off",
-    "punishment": "PUNISHMENT FOR LEAVING",
-    "punishmentNone": "None",
-    "punishmentAddTime": "+2 min",
-    "punishmentAddTimeLong": "+5 min",
-    "punishmentReset": "Reset timer",
-    "punishmentRandom": "?",
-    "begin": "BEGIN SESSION"
-  },
-  "session": {
-    "graceInstruction": "put your phone down",
-    "phaseIdle": "settle in",
-    "phaseActive": "breathe",
-    "phaseWinding": "almost there"
-  },
-  "scold": {
-    "resume": "I'M BACK, I SWEAR",
-    "penaltyAddTime": "+2:00 ADDED",
-    "penaltyAddTimeSilent": "TIME EXTENDED",
-    "penaltyAddTimeLong": "+5:00 ADDED",
-    "penaltyReset": "TIMER RESET"
-  },
-  "complete": {
-    "title": "SESSION COMPLETE",
-    "score": "SCORE",
-    "concentration": "HOW FOCUSED WERE YOU?",
-    "concentrationHint": "be honest",
-    "continue": "CONTINUE",
-    "pickups": "pickups",
-    "streakUpdate": "streak updated"
-  },
-  "stats": {
-    "title": "RECORD",
-    "streak": "CURRENT STREAK",
-    "avgConcentration": "AVG CONCENTRATION",
-    "history": "SESSIONS",
-    "empty": "No sessions yet. Begin.",
-    "noStreak": "no streak yet",
-    "focus": "focus",
-    "pickups": "pickups"
-  },
-  "challenge": {
-    "title": "OPTIONAL CHALLENGE",
-    "description": "stay completely still in silence for {{minutes}} minutes",
-    "accept": "ACCEPT",
-    "decline": "skip"
-  },
-  "settings": {
-    "title": "SETTINGS",
-    "tone": "SENSEI TONE",
-    "toneStrict": "Strict",
-    "toneEncouraging": "Encouraging",
-    "graceperiod": "STREAK GRACE PERIOD",
-    "graceperiodHint": "hours before midnight"
-  },
-  "messages": {
-    "strict": {
-      "grace": [
-        "I bet you can't do this.",
-        "Your phone misses you already.",
-        "Let's see how long this lasts.",
-        "You'll give up. You always do.",
-        "Prove me wrong. You won't.",
-        "I've seen better commitment from houseplants.",
-        "This will go poorly for you."
-      ],
-      "pickup": [
-        "Really? REALLY?",
-        "Disgraceful.",
-        "The phone calls to you and you answer like a dog.",
-        "I expected nothing and you still disappointed me.",
-        "Pathetic.",
-        "Five seconds. That is all it took.",
-        "You were doing so well. Now you are not."
-      ],
-      "appSwitch": [
-        "You LEFT. You actually LEFT.",
-        "The audacity. The sheer, breathtaking audacity.",
-        "I saw that. I see everything.",
-        "That was not an accident. You know what you did.",
-        "You chose Instagram over enlightenment. Reflect on that.",
-        "Coward.",
-        "Running away won't make your problems smaller. It will make your session longer.",
-        "You have summoned consequences.",
-        "Where did you go? DID IT HELP? NO. COME BACK.",
-        "I cannot believe you. And yet, here we are."
-      ],
-      "complete": [
-        "Acceptable. Do not celebrate.",
-        "You have done the bare minimum. Good.",
-        "Even a broken clock is right twice a day.",
-        "Fine. Go eat something.",
-        "I have seen worse. Barely.",
-        "You may go.",
-        "This will have to do."
-      ],
-      "streakBroken": [
-        "Streak lost. As expected.",
-        "The streak is dead. Begin again.",
-        "You had one job.",
-        "Disappointing but not surprising."
-      ],
-      "streakMilestone": [
-        "You persist. Fine.",
-        "Still here. I acknowledge this.",
-        "Consistency noted. Do not make it a personality.",
-        "The streak grows. So do my expectations."
-      ],
-      "challenge": [
-        "Bet you can't do this one.",
-        "Too scared? I thought so.",
-        "This will end poorly for you. Do it anyway.",
-        "You won't. But try.",
-        "One more. Unless you're afraid.",
-        "You're going to say no. Prove me wrong."
-      ]
-    },
-    "encouraging": {
-      "grace": [
-        "You've got this.",
-        "Everything else can wait.",
-        "You showed up. That already means something.",
-        "Breathe. You know how to do this.",
-        "This moment is yours.",
-        "Leave the world outside for a while.",
-        "Ten seconds. Just ten seconds."
-      ],
-      "pickup": [
-        "Hey, it happens. Come back.",
-        "The mind wanders. That's normal. Return.",
-        "You noticed. That's the practice.",
-        "No judgment. Just breathe.",
-        "It's okay. Start again.",
-        "Phones are designed to distract. You're fighting that. Come back.",
-        "One interruption doesn't ruin the session."
-      ],
-      "appSwitch": [
-        "Hey — you stepped away intentionally. That's okay. Come back.",
-        "You left. The door is still open. Return.",
-        "The pull is strong. You felt it. Now return.",
-        "That was a deliberate choice. This is a better one.",
-        "Noticed. It's okay. What matters is you're back.",
-        "The world waited. It'll keep waiting. You're here now.",
-        "You went somewhere else. That somewhere isn't going anywhere. Come back."
-      ],
-      "complete": [
-        "Beautiful. You showed up.",
-        "That took courage. Well done.",
-        "Every session counts. This one counted.",
-        "You did the hard thing. That's everything.",
-        "Look at you. Still here, still trying.",
-        "The fact you finished means something.",
-        "That was real practice. Be proud."
-      ],
-      "streakBroken": [
-        "Rest is part of the practice. Begin again.",
-        "Streaks end. New ones begin. Today.",
-        "It's okay. You know the way back.",
-        "Tomorrow is a new start."
-      ],
-      "streakMilestone": [
-        "Look how far you've come.",
-        "Consistency is the whole game. You're playing it.",
-        "This streak is real. You built it.",
-        "Day by day. That's how it works."
-      ],
-      "challenge": [
-        "One more round? You've got it in you.",
-        "Think you can go deeper? Try.",
-        "This one's shorter. You can do it.",
-        "The stillness is still there. Go find it again.",
-        "You're warm. Keep going.",
-        "You already know how. Do it once more."
-      ]
-    }
-  }
 }
