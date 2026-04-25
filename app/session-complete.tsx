@@ -226,5 +226,6 @@ const styles = StyleSheet.create({
     },
     challengeBtn: {
         flex: 1,
+        paddingHorizontal: spacing.sm,
     },
 });

@@ -6,6 +6,7 @@ import Screen from "../components/ui/Screen";
 import Card from "../components/ui/Card";
 import Spacer from "../components/ui/Spacer";
 import { useStreakStore } from "../lib/store/streakStore";
+import { useShopStore } from "../lib/store/shopStore";
 import { DEV_MODE_AVAILABLE } from "../lib/config";
 import { colors, spacing, typography } from "../lib/theme";
 
@@ -15,6 +16,8 @@ export default function Settings() {
     const setTone = useStreakStore((s) => s.setTone);
     const devMode = useStreakStore((s) => s.devMode);
     const setDevMode = useStreakStore((s) => s.setDevMode);
+    const devCoins = useShopStore((s) => s.devCoins);
+    const addDevCoins = useShopStore((s) => s.addDevCoins);
     const showWelcome = useStreakStore((s) => s.showWelcome);
     const showSessionTips = useStreakStore((s) => s.showSessionTips);
     const resetHints = useStreakStore((s) => s.resetHints);
@@ -160,6 +163,60 @@ export default function Settings() {
                                     thumbColor={colors.text}
                                 />
                             </View>
+
+                            {devMode && (
+                                <>
+                                    <Spacer size={spacing.md} />
+                                    <View style={styles.devDivider} />
+                                    <Spacer size={spacing.md} />
+                                    <Text
+                                        style={[
+                                            typography.caption,
+                                            { color: colors.danger + "99" },
+                                        ]}
+                                    >
+                                        COINS
+                                    </Text>
+                                    <Spacer size={spacing.xs} />
+                                    <Text style={styles.devCoinValue}>
+                                        🪙 {devCoins.toLocaleString()}
+                                    </Text>
+                                    <Spacer size={spacing.sm} />
+                                    <View style={styles.row}>
+                                        {[100, 500, 1000].map((amt) => (
+                                            <TouchableOpacity
+                                                key={amt}
+                                                style={styles.devCoinBtn}
+                                                onPress={() =>
+                                                    addDevCoins(amt)
+                                                }
+                                            >
+                                                <Text style={styles.devCoinBtnText}>
+                                                    +{amt}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                        <TouchableOpacity
+                                            style={[
+                                                styles.devCoinBtn,
+                                                styles.devCoinBtnReset,
+                                            ]}
+                                            onPress={() =>
+                                                addDevCoins(-devCoins)
+                                            }
+                                        >
+                                            <Text
+                                                style={[
+                                                    styles.devCoinBtnText,
+                                                    { color: colors.danger },
+                                                ]}
+                                            >
+                                                RESET
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </>
+                            )}
                         </Card>
                     </>
                 )}
@@ -186,6 +243,36 @@ const styles = StyleSheet.create({
     devCard: {
         borderWidth: 1,
         borderColor: colors.danger + "44",
+    },
+
+    devDivider: {
+        height: 1,
+        backgroundColor: colors.danger + "22",
+    },
+
+    devCoinValue: {
+        fontSize: 24,
+        fontWeight: "200" as const,
+        letterSpacing: 3,
+        color: colors.gold,
+    },
+
+    devCoinBtn: {
+        paddingVertical: spacing.xs,
+        paddingHorizontal: spacing.md,
+        borderRadius: 999,
+        borderWidth: 1,
+        borderColor: colors.danger + "55",
+    },
+
+    devCoinBtnReset: {
+        borderColor: colors.danger + "88",
+    },
+
+    devCoinBtnText: {
+        fontSize: 11,
+        letterSpacing: 1,
+        color: colors.danger + "cc",
     },
 
     resetButton: {

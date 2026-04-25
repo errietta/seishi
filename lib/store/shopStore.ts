@@ -16,6 +16,7 @@ interface ShopState {
     activeOrbTheme: string | null;
     activeTitle: string | null;
     purchases: Purchase[];
+    devCoins: number;
     initialized: boolean;
 
     initialize: () => Promise<void>;
@@ -23,6 +24,7 @@ interface ShopState {
     useStreakFreeze: () => void;
     setActiveOrbTheme: (id: string | null) => void;
     setActiveTitle: (id: string | null) => void;
+    addDevCoins: (amount: number) => void;
 }
 
 function persist(state: {
@@ -31,6 +33,7 @@ function persist(state: {
     activeOrbTheme: string | null;
     activeTitle: string | null;
     purchases: Purchase[];
+    devCoins: number;
 }) {
     AsyncStorage.setItem(SHOP_KEY, JSON.stringify(state)).catch(() => {});
 }
@@ -41,6 +44,7 @@ export const useShopStore = create<ShopState>((set, get) => ({
     activeOrbTheme: null,
     activeTitle: null,
     purchases: [],
+    devCoins: 0,
     initialized: false,
 
     initialize: async () => {
@@ -73,6 +77,7 @@ export const useShopStore = create<ShopState>((set, get) => ({
             activeOrbTheme: state.activeOrbTheme,
             activeTitle: state.activeTitle,
             purchases: [purchase, ...state.purchases].slice(0, 100),
+            devCoins: state.devCoins,
         };
 
         set(next);
@@ -89,6 +94,7 @@ export const useShopStore = create<ShopState>((set, get) => ({
             activeOrbTheme: state.activeOrbTheme,
             activeTitle: state.activeTitle,
             purchases: state.purchases,
+            devCoins: state.devCoins,
         };
         set(next);
         persist(next);
@@ -102,6 +108,7 @@ export const useShopStore = create<ShopState>((set, get) => ({
             activeOrbTheme: id,
             activeTitle: state.activeTitle,
             purchases: state.purchases,
+            devCoins: state.devCoins,
         };
         set(next);
         persist(next);
@@ -115,6 +122,21 @@ export const useShopStore = create<ShopState>((set, get) => ({
             activeOrbTheme: state.activeOrbTheme,
             activeTitle: id,
             purchases: state.purchases,
+            devCoins: state.devCoins,
+        };
+        set(next);
+        persist(next);
+    },
+
+    addDevCoins: (amount) => {
+        const state = get();
+        const next = {
+            ownedItems: state.ownedItems,
+            streakFreezes: state.streakFreezes,
+            activeOrbTheme: state.activeOrbTheme,
+            activeTitle: state.activeTitle,
+            purchases: state.purchases,
+            devCoins: Math.max(0, state.devCoins + amount),
         };
         set(next);
         persist(next);

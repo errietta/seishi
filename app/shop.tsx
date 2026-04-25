@@ -163,11 +163,12 @@ export default function Shop() {
     const activeOrbTheme = useShopStore((s) => s.activeOrbTheme);
     const activeTitle = useShopStore((s) => s.activeTitle);
     const purchases = useShopStore((s) => s.purchases);
+    const devCoins = useShopStore((s) => s.devCoins);
     const buyItem = useShopStore((s) => s.buyItem);
     const setActiveOrbTheme = useShopStore((s) => s.setActiveOrbTheme);
     const setActiveTitle = useShopStore((s) => s.setActiveTitle);
 
-    const earned = Math.round(history.reduce((sum, r) => sum + r.score, 0));
+    const earned = Math.round(history.reduce((sum, r) => sum + r.score, 0)) + devCoins;
     const spent = purchases.reduce((sum, p) => sum + p.cost, 0);
     const balance = earned - spent;
 

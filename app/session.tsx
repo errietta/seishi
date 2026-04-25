@@ -160,7 +160,6 @@ export default function Session() {
             try {
                 const current = await Brightness.getBrightnessAsync();
                 if (active) originalBrightness.current = current;
-                await Brightness.setBrightnessAsync(BRIGHTNESS_DIM_VALUE);
             } catch {}
             if (session.sound) {
                 playAmbient(session.sound as SoundKey).catch(() => {});
@@ -174,9 +173,12 @@ export default function Session() {
                 const next = prev - 1;
                 if (next <= 0) {
                     clearInterval(graceInterval);
+                    Brightness.setBrightnessAsync(BRIGHTNESS_DIM_VALUE).catch(() => {});
                     detector.current.start(showScold);
                     timerRef.current = setInterval(() => {
-                        session.tickElapsed();
+                        if (useSessionStore.getState().isRunning) {
+                            session.tickElapsed();
+                        }
                     }, 1000);
                 }
                 return next;

@@ -24,9 +24,10 @@ export default function Home() {
     const purchases = useShopStore((s) => s.purchases);
     const activeOrbTheme = useShopStore((s) => s.activeOrbTheme);
     const activeTitle = useShopStore((s) => s.activeTitle);
+    const devCoins = useShopStore((s) => s.devCoins);
 
     const lastScore = history[0]?.score;
-    const earned = Math.round(history.reduce((sum, r) => sum + r.score, 0));
+    const earned = Math.round(history.reduce((sum, r) => sum + r.score, 0)) + devCoins;
     const spent = purchases.reduce((sum, p) => sum + p.cost, 0);
     const balance = earned - spent;
 
@@ -40,7 +41,6 @@ export default function Home() {
     return (
         <Screen>
             <View style={styles.container}>
-
                 {/* ── top nav ── */}
                 <View style={styles.topNav}>
                     <TouchableOpacity
@@ -91,6 +91,7 @@ export default function Home() {
                     </Text>
                     {activeTitleItem && (
                         <Text style={styles.titleBadge}>
+                            {activeTitleItem.icon}
                             {activeTitleItem.titleText}
                         </Text>
                     )}
