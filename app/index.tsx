@@ -26,6 +26,12 @@ export default function Home() {
     const activeTitle = useShopStore((s) => s.activeTitle);
     const devCoins = useShopStore((s) => s.devCoins);
 
+    const formatCoins = (n: number): string => {
+        if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 1)}m`;
+        if (n >= 10_000) return `${(n / 1_000).toFixed(n % 1_000 === 0 ? 0 : 1)}k`;
+        return n.toLocaleString();
+    };
+
     const lastScore = history[0]?.score;
     const earned = Math.round(history.reduce((sum, r) => sum + r.score, 0)) + devCoins;
     const spent = purchases.reduce((sum, p) => sum + p.cost, 0);
@@ -57,7 +63,7 @@ export default function Home() {
                         </Text>
                         {balance > 0 && (
                             <Text style={styles.walletLabel}>
-                                🪙 {balance.toLocaleString()}
+                                🪙 {formatCoins(balance)}
                             </Text>
                         )}
                     </TouchableOpacity>
