@@ -64,9 +64,24 @@ export default function Session() {
         await stopAmbient();
 
         if (session.gongOnComplete) {
-            await Haptics.notificationAsync(
-                Haptics.NotificationFeedbackType.Success,
-            ).catch(() => {});
+            const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(
+                (e) => {
+                    console.error("Haptics error:", e);
+                },
+            );
+            await delay(120);
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(
+                (e) => {
+                    console.error("Haptics error:", e);
+                },
+            );
+            await delay(80);
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(
+                (e) => {
+                    console.error("Haptics error:", e);
+                },
+            );
         }
 
         KeepAwake.deactivateKeepAwake(KEEP_AWAKE_TAG);
@@ -173,7 +188,9 @@ export default function Session() {
                 const next = prev - 1;
                 if (next <= 0) {
                     clearInterval(graceInterval);
-                    Brightness.setBrightnessAsync(BRIGHTNESS_DIM_VALUE).catch(() => {});
+                    Brightness.setBrightnessAsync(BRIGHTNESS_DIM_VALUE).catch(
+                        () => {},
+                    );
                     detector.current.start(showScold);
                     timerRef.current = setInterval(() => {
                         if (useSessionStore.getState().isRunning) {

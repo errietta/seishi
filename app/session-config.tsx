@@ -48,7 +48,7 @@ export default function SessionConfig() {
     const [spicyMin, setSpicyMin] = useState(7);
     const [spicyMax, setSpicyMax] = useState(15);
     const [punishment, setPunishment] = useState<PunishmentMode>("none");
-    const [gong, setGong] = useState(false);
+    const [gong, setGong] = useState(true);
 
     const soundLabel = (key: string) => {
         if (key === "none") return t("config.soundNone");
@@ -271,9 +271,7 @@ export default function SessionConfig() {
                         : null;
                     return (
                         <View style={styles.coinEstimate}>
-                            <Text style={styles.coinEstimateLabel}>
-                                UP TO
-                            </Text>
+                            <Text style={styles.coinEstimateLabel}>UP TO</Text>
                             <Text style={styles.coinEstimateValue}>
                                 {maxCoins !== null
                                     ? `🪙 ${minCoins.toLocaleString()} – ${maxCoins.toLocaleString()}`

@@ -76,7 +76,7 @@ export default function SessionComplete() {
             devMode ? 5 : challengeMinutes * 60,
             null,
             "none",
-            false,
+            true,
             true,
         );
         router.replace("/session");
