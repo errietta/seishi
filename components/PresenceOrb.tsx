@@ -27,7 +27,7 @@ export default function PresenceOrb({
     angry = false,
 }: Props) {
     const scale = useSharedValue(1);
-    const coreOpacity = useSharedValue(0.7);
+    const coreOpacity = useSharedValue(0.6);
     const glowOpacity = useSharedValue(0.3);
     const driftX = useSharedValue(0);
     const driftY = useSharedValue(0);
@@ -74,45 +74,29 @@ export default function PresenceOrb({
             const breathIn =
                 phase === "idle" ? 6000 : phase === "winding" ? 5000 : 4000;
             const hold = breathIn / 2;
-            const breathOut = breathIn;
+            const halfCycle = breathIn + hold / 2;
 
             scale.value = withRepeat(
-                withSequence(
-                    withTiming(1.18, {
-                        duration: breathIn,
-                        easing: Easing.inOut(Easing.sin),
-                    }),
-                    withTiming(1.18, { duration: hold }),
-                    withTiming(1.0, {
-                        duration: breathOut,
-                        easing: Easing.inOut(Easing.sin),
-                    }),
-                ),
+                withTiming(1.18, {
+                    duration: halfCycle,
+                    easing: Easing.inOut(Easing.sin),
+                }),
                 -1,
-                false,
+                true,
             );
             coreOpacity.value = withRepeat(
-                withSequence(
-                    withTiming(1.0, {
-                        duration: breathIn,
-                        easing: Easing.inOut(Easing.sin),
-                    }),
-                    withTiming(1.0, { duration: hold }),
-                    withTiming(0.6, {
-                        duration: breathOut,
-                        easing: Easing.inOut(Easing.sin),
-                    }),
-                ),
+                withTiming(1.0, {
+                    duration: halfCycle,
+                    easing: Easing.inOut(Easing.sin),
+                }),
                 -1,
-                false,
+                true,
             );
             glowOpacity.value = withRepeat(
-                withSequence(
-                    withTiming(phase === "idle" ? 0.5 : 0.8, {
-                        duration: breathIn,
-                    }),
-                    withTiming(0.2, { duration: breathOut }),
-                ),
+                withTiming(phase === "idle" ? 0.5 : 0.8, {
+                    duration: halfCycle,
+                    easing: Easing.inOut(Easing.sin),
+                }),
                 -1,
                 true,
             );
