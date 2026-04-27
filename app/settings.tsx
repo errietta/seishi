@@ -29,8 +29,11 @@ export default function Settings() {
     const setTone = useStreakStore((s) => s.setTone);
     const devMode = useStreakStore((s) => s.devMode);
     const setDevMode = useStreakStore((s) => s.setDevMode);
+    const history = useStreakStore((s) => s.history);
+    const earnedFromHistory = Math.round(history.reduce((sum, r) => sum + r.score, 0));
     const devCoins = useShopStore((s) => s.devCoins);
     const addDevCoins = useShopStore((s) => s.addDevCoins);
+    const resetDevCoins = useShopStore((s) => s.resetDevCoins);
     const showWelcome = useStreakStore((s) => s.showWelcome);
     const showSessionTips = useStreakStore((s) => s.showSessionTips);
     const resetHints = useStreakStore((s) => s.resetHints);
@@ -313,7 +316,7 @@ export default function Settings() {
                                                 styles.devCoinBtnReset,
                                             ]}
                                             onPress={() =>
-                                                addDevCoins(-devCoins)
+                                                resetDevCoins(earnedFromHistory)
                                             }
                                         >
                                             <Text

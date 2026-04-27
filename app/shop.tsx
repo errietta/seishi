@@ -48,7 +48,8 @@ function ShopItemCard({
     onUnequip: () => void;
 }) {
     const { t } = useTranslation();
-    const isEquippable = item.type === "orb-theme" || item.type === "title";
+    const isEquippable =
+        item.type === "orb-theme" || item.type === "title" || item.type === "presence-shape";
     const isConsumable = !!item.consumable;
 
     return (
@@ -160,15 +161,17 @@ export default function Shop() {
 
     const ownedItems = useShopStore((s) => s.ownedItems);
     const streakFreezes = useShopStore((s) => s.streakFreezes);
-    const activeOrbTheme = useShopStore((s) => s.activeOrbTheme);
+    const activePresenceTheme = useShopStore((s) => s.activePresenceTheme);
     const activeTitle = useShopStore((s) => s.activeTitle);
     const purchases = useShopStore((s) => s.purchases);
     const devCoins = useShopStore((s) => s.devCoins);
     const buyItem = useShopStore((s) => s.buyItem);
     const setActiveOrbTheme = useShopStore((s) => s.setActiveOrbTheme);
+    const setActivePresenceTheme = useShopStore((s) => s.setActivePresenceTheme);
     const setActiveTitle = useShopStore((s) => s.setActiveTitle);
 
-    const earned = Math.round(history.reduce((sum, r) => sum + r.score, 0)) + devCoins;
+    const earned =
+        Math.round(history.reduce((sum, r) => sum + r.score, 0)) + devCoins;
     const spent = purchases.reduce((sum, p) => sum + p.cost, 0);
     const balance = earned - spent;
 
@@ -199,7 +202,9 @@ export default function Shop() {
     }
 
     const byType = (type: CatalogItem["type"]) =>
-        CATALOG.filter((c) => c.type === type);
+        CATALOG.filter((c) => c.type === type).sort(
+            (a, b) => a.price - b.price,
+        );
 
     return (
         <Screen>
@@ -229,8 +234,8 @@ export default function Shop() {
                         🪙 {balance.toLocaleString()}
                     </Text>
                     <Text style={styles.balanceMeta}>
-                        +{earned.toLocaleString()} {t("shop.earned")} ·{" "}
-                        -{spent.toLocaleString()} {t("shop.spent")}
+                        +{earned.toLocaleString()} {t("shop.earned")} · -
+                        {spent.toLocaleString()} {t("shop.spent")}
                     </Text>
                 </Card>
 
@@ -251,6 +256,23 @@ export default function Shop() {
                     />
                 ))}
 
+                {/* ── presence shapes ── */}
+                <Spacer size={spacing.lg} />
+                <SectionHead label="PRESENCE SHAPES" />
+                {byType("presence-shape").map((item) => (
+                    <ShopItemCard
+                        key={item.id}
+                        item={item}
+                        owned={ownedItems.includes(item.id)}
+                        active={activePresenceTheme === item.id}
+                        freezeCount={0}
+                        canAfford={balance >= item.price}
+                        onBuy={() => handleBuy(item)}
+                        onEquip={() => setActivePresenceTheme(item.id)}
+                        onUnequip={() => setActivePresenceTheme(null)}
+                    />
+                ))}
+
                 {/* ── orb themes ── */}
                 <Spacer size={spacing.lg} />
                 <SectionHead label={t("shop.orbThemes")} />
@@ -259,7 +281,7 @@ export default function Shop() {
                         key={item.id}
                         item={item}
                         owned={ownedItems.includes(item.id)}
-                        active={activeOrbTheme === item.id}
+                        active={activePresenceTheme === item.id}
                         freezeCount={0}
                         canAfford={balance >= item.price}
                         onBuy={() => handleBuy(item)}
@@ -310,9 +332,7 @@ export default function Shop() {
                     onPress={() => router.push("/stats")}
                     activeOpacity={0.7}
                 >
-                    <Text style={styles.recordLabel}>
-                        {t("stats.title")} →
-                    </Text>
+                    <Text style={styles.recordLabel}>{t("stats.title")} →</Text>
                 </TouchableOpacity>
 
                 {/* ── coin history ── */}
@@ -326,8 +346,7 @@ export default function Shop() {
                             key={i}
                             style={[
                                 styles.ledgerRow,
-                                i < ledger.length - 1 &&
-                                    styles.ledgerRowBorder,
+                                i < ledger.length - 1 && styles.ledgerRowBorder,
                             ]}
                         >
                             <Text style={styles.ledgerDate}>

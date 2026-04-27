@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import Screen from "../components/ui/Screen";
 import Button from "../components/ui/Button";
 import Spacer from "../components/ui/Spacer";
-import PresenceOrb from "../components/PresenceOrb";
+import PresenceDisplay from "../components/PresenceDisplay";
 import StreakDisplay from "../components/StreakDisplay";
 import HintModal, { HintTip } from "../components/HintModal";
 import { useStreakStore } from "../lib/store/streakStore";
@@ -22,7 +22,7 @@ export default function Home() {
     const setShowWelcome = useStreakStore((s) => s.setShowWelcome);
 
     const purchases = useShopStore((s) => s.purchases);
-    const activeOrbTheme = useShopStore((s) => s.activeOrbTheme);
+    const activePresenceTheme = useShopStore((s) => s.activePresenceTheme);
     const activeTitle = useShopStore((s) => s.activeTitle);
     const devCoins = useShopStore((s) => s.devCoins);
 
@@ -37,9 +37,6 @@ export default function Home() {
     const spent = purchases.reduce((sum, p) => sum + p.cost, 0);
     const balance = earned - spent;
 
-    const activeOrbItem = activeOrbTheme
-        ? CATALOG.find((c) => c.id === activeOrbTheme)
-        : null;
     const activeTitleItem = activeTitle
         ? CATALOG.find((c) => c.id === activeTitle)
         : null;
@@ -105,11 +102,10 @@ export default function Home() {
 
                 {/* ── orb ── */}
                 <View style={styles.orbArea}>
-                    <PresenceOrb
+                    <PresenceDisplay
                         phase="idle"
                         size={110}
-                        orbCoreColor={activeOrbItem?.orbColors?.core}
-                        orbGlowColor={activeOrbItem?.orbColors?.glow}
+                        itemId={activePresenceTheme}
                     />
                 </View>
 
