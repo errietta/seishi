@@ -1,4 +1,9 @@
-export type ItemType = "sound" | "orb-theme" | "streak-freeze" | "title" | "presence-shape";
+export type ItemType =
+    | "sound"
+    | "orb-theme"
+    | "streak-freeze"
+    | "title"
+    | "presence-shape";
 
 export interface CatalogItem {
     id: string;
@@ -146,6 +151,24 @@ export const CATALOG: CatalogItem[] = [
 
     // ── titles ──────────────────────────────────────────────────────
 
+    {
+        id: "seishi-stillness",
+        type: "title",
+        name: "静止　（stillness）",
+        icon: "☯️",
+        price: 200,
+        description: "One of the meanings of Seishi.",
+        titleText: "静止",
+    },
+    {
+        id: "seishi-mediation",
+        type: "title",
+        name: "静思 (meditation)",
+        icon: "🧘",
+        price: 200,
+        description: "The other meaning of Seishi.",
+        titleText: "静思",
+    },
     {
         id: "title-still",
         type: "title",
