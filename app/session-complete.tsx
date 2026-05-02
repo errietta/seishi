@@ -22,6 +22,7 @@ export default function SessionComplete() {
     const { t } = useTranslation();
     const session = useSessionStore();
     const streak = useStreakStore();
+    const language = useStreakStore((s) => s.language);
 
     const [concentration, setConcentration] = useState(5);
     const savedRef = useRef(false);
@@ -35,10 +36,10 @@ export default function SessionComplete() {
         mode: session.mode!,
         punishmentMode: session.punishmentMode,
     });
-    const message = useRef(getRandomMessage(streak.tone, "complete")).current;
+    const message = useRef(getRandomMessage(streak.tone, "complete", language)).current;
     const challengeMinutes = useRef(Math.floor(Math.random() * 10) + 1).current;
     const challengeMessage = useRef(
-        getRandomMessage(streak.tone, "challenge"),
+        getRandomMessage(streak.tone, "challenge", language),
     ).current;
 
     const scoreScale = useSharedValue(0);

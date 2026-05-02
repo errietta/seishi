@@ -48,6 +48,7 @@ export default function Settings() {
         (s) => s.setNotificationsEnabled,
     );
     const setNotificationTime = useStreakStore((s) => s.setNotificationTime);
+    const language = useStreakStore((s) => s.language);
 
     const [showPicker, setShowPicker] = useState(false);
 
@@ -64,7 +65,7 @@ export default function Settings() {
         const m = selected.getMinutes();
         setNotificationTime(h, m);
         if (notificationsEnabled) {
-            scheduleDailyReminder(h, m);
+            scheduleDailyReminder(h, m, language);
         }
     }
 
@@ -79,7 +80,7 @@ export default function Settings() {
                 return;
             }
             setNotificationsEnabled(true);
-            scheduleDailyReminder(notificationHour, notificationMinute);
+            scheduleDailyReminder(notificationHour, notificationMinute, language);
         } else {
             setNotificationsEnabled(false);
             cancelDailyReminder();

@@ -20,6 +20,7 @@ const SHOW_TIPS_KEY = "seishi_show_tips";
 const NOTIFICATIONS_ENABLED_KEY = "seishi_notifications_enabled";
 const NOTIFICATIONS_HOUR_KEY = "seishi_notifications_hour";
 const NOTIFICATIONS_MINUTE_KEY = "seishi_notifications_minute";
+const LANGUAGE_KEY = "seishi_language";
 const GRACE_HOURS = 2;
 
 function isConsecutiveDay(lastDateStr: string, now: Date): boolean {
@@ -41,6 +42,7 @@ interface StreakState {
     notificationsEnabled: boolean;
     notificationHour: number;
     notificationMinute: number;
+    language: string;
     initialize: () => Promise<void>;
     recordSession: (record: Omit<SessionRecord, "date">) => Promise<void>;
     setTone: (tone: "strict" | "encouraging") => void;
@@ -50,6 +52,7 @@ interface StreakState {
     resetHints: () => void;
     setNotificationsEnabled: (v: boolean) => void;
     setNotificationTime: (hour: number, minute: number) => void;
+    setLanguage: (lang: string) => void;
 }
 
 export const useStreakStore = create<StreakState>((set, get) => ({
@@ -64,6 +67,7 @@ export const useStreakStore = create<StreakState>((set, get) => ({
     notificationsEnabled: false,
     notificationHour: 8,
     notificationMinute: 0,
+    language: "en",
 
     initialize: async () => {
         try {
@@ -76,6 +80,7 @@ export const useStreakStore = create<StreakState>((set, get) => ({
                 notificationsEnabledRaw,
                 notificationHourRaw,
                 notificationMinuteRaw,
+                language,
             ] = await Promise.all([
                 AsyncStorage.getItem(STREAK_KEY),
                 AsyncStorage.getItem(TONE_KEY),
@@ -85,6 +90,7 @@ export const useStreakStore = create<StreakState>((set, get) => ({
                 AsyncStorage.getItem(NOTIFICATIONS_ENABLED_KEY),
                 AsyncStorage.getItem(NOTIFICATIONS_HOUR_KEY),
                 AsyncStorage.getItem(NOTIFICATIONS_MINUTE_KEY),
+                AsyncStorage.getItem(LANGUAGE_KEY),
             ]);
             const data = streakRaw ? JSON.parse(streakRaw) : {};
             set({
@@ -101,6 +107,7 @@ export const useStreakStore = create<StreakState>((set, get) => ({
                 notificationMinute: notificationMinuteRaw
                     ? parseInt(notificationMinuteRaw, 10)
                     : 0,
+                language: language ?? "en",
                 initialized: true,
             });
         } catch {
@@ -190,5 +197,10 @@ export const useStreakStore = create<StreakState>((set, get) => ({
             NOTIFICATIONS_MINUTE_KEY,
             String(minute),
         ).catch(() => {});
+    },
+
+    setLanguage: (lang) => {
+        set({ language: lang });
+        AsyncStorage.setItem(LANGUAGE_KEY, lang).catch(() => {});
     },
 }));

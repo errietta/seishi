@@ -21,6 +21,7 @@ export default function RootLayout() {
     );
     const notificationHour = useStreakStore((s) => s.notificationHour);
     const notificationMinute = useStreakStore((s) => s.notificationMinute);
+    const language = useStreakStore((s) => s.language);
 
     useEffect(() => {
         initialize();
@@ -32,13 +33,13 @@ export default function RootLayout() {
         if (notificationsEnabled) {
             requestNotificationPermission().then((granted) => {
                 if (granted) {
-                    scheduleDailyReminder(notificationHour, notificationMinute);
+                    scheduleDailyReminder(notificationHour, notificationMinute, language);
                 }
             });
         } else {
             cancelDailyReminder();
         }
-    }, [initialized, notificationsEnabled, notificationHour, notificationMinute]);
+    }, [initialized, notificationsEnabled, notificationHour, notificationMinute, language]);
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>

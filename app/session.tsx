@@ -33,12 +33,13 @@ export default function Session() {
     const { t } = useTranslation();
     const session = useSessionStore();
     const tone = useStreakStore((s) => s.tone);
+    const language = useStreakStore((s) => s.language);
     const showSessionTips = useStreakStore((s) => s.showSessionTips);
     const setShowSessionTips = useStreakStore((s) => s.setShowSessionTips);
     const activePresenceTheme = useShopStore((s) => s.activePresenceTheme);
 
     const [graceRemaining, setGraceRemaining] = useState(GRACE_SECONDS);
-    const [graceMessage] = useState(() => getRandomMessage(tone, "grace"));
+    const [graceMessage] = useState(() => getRandomMessage(tone, "grace", language));
     const [scoldVisible, setScoldVisible] = useState(false);
     const [scoldMessage, setScoldMessage] = useState("");
     const [penaltyLabel, setPenaltyLabel] = useState<string | undefined>();
@@ -115,7 +116,7 @@ export default function Session() {
             }
 
             const messageKey = isDeliberate ? "appSwitch" : "pickup";
-            setScoldMessage(getRandomMessage(tone, messageKey));
+            setScoldMessage(getRandomMessage(tone, messageKey, language));
 
             let label: string | undefined;
 

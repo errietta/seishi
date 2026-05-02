@@ -1,6 +1,6 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
-import en from "./i18n/en.json";
+import { getTranslations } from "./i18n";
 
 const NOTIFICATION_ID = "seishi_daily_reminder";
 
@@ -25,15 +25,17 @@ export async function requestNotificationPermission(): Promise<boolean> {
 export async function scheduleDailyReminder(
     hour: number,
     minute: number,
+    lang = "en",
 ): Promise<void> {
     await cancelDailyReminder();
-    const messages = en.notifications.reminderMessages;
+    const t = getTranslations(lang);
+    const messages = t.notifications.reminderMessages;
     const body = messages[Math.floor(Math.random() * messages.length)];
 
     await Notifications.scheduleNotificationAsync({
         identifier: NOTIFICATION_ID,
         content: {
-            title: en.notifications.reminderTitle,
+            title: t.notifications.reminderTitle,
             body,
         },
         trigger: {
