@@ -21,13 +21,12 @@ const NOTIFICATIONS_ENABLED_KEY = "seishi_notifications_enabled";
 const NOTIFICATIONS_HOUR_KEY = "seishi_notifications_hour";
 const NOTIFICATIONS_MINUTE_KEY = "seishi_notifications_minute";
 const LANGUAGE_KEY = "seishi_language";
-const GRACE_HOURS = 2;
 
 function isConsecutiveDay(lastDateStr: string, now: Date): boolean {
     const last = new Date(lastDateStr);
-    const diffMs = now.getTime() - last.getTime();
-    const diffDays = diffMs / (1000 * 60 * 60 * 24);
-    return diffDays <= 1 + GRACE_HOURS / 24;
+    const today = new Date(now.toISOString().split("T")[0]);
+    const diffDays = Math.round((today.getTime() - last.getTime()) / (1000 * 60 * 60 * 24));
+    return diffDays === 1;
 }
 
 interface StreakState {
