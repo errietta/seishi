@@ -4,6 +4,7 @@ import Animated, {
     useSharedValue,
     useAnimatedStyle,
     withSpring,
+    withDelay,
 } from "react-native-reanimated";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -17,6 +18,8 @@ import { useStreakStore } from "../lib/store/streakStore";
 import { calculateCoins } from "../lib/scoring/scoreCalculator";
 import { getRandomMessage } from "../lib/i18n";
 import { colors, spacing, typography } from "../lib/theme";
+import { useLootStore } from "../lib/store/lootStore";
+import { rollLoot, LOOT_TABLE, type LootItem } from "../lib/loot/lootTable";
 
 export default function SessionComplete() {
     const { t } = useTranslation();
@@ -24,7 +27,10 @@ export default function SessionComplete() {
     const streak = useStreakStore();
     const language = useStreakStore((s) => s.language);
 
+    const lootStore = useLootStore();
+
     const [concentration, setConcentration] = useState(5);
+    const [lootItem, setLootItem] = useState<LootItem | null>(null);
     const savedRef = useRef(false);
 
     const devMode = useStreakStore((s) => s.devMode);
@@ -43,12 +49,19 @@ export default function SessionComplete() {
     ).current;
 
     const scoreScale = useSharedValue(0);
+    const lootScale = useSharedValue(0);
+
     useEffect(() => {
         scoreScale.value = withSpring(1, { damping: 10, stiffness: 80 });
+        save();
     }, []);
 
     const scoreStyle = useAnimatedStyle(() => ({
         transform: [{ scale: scoreScale.value }],
+    }));
+
+    const lootStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: lootScale.value }],
     }));
 
     async function save() {
@@ -61,6 +74,18 @@ export default function SessionComplete() {
                 duration: session.duration,
                 pickups: session.pickups,
             });
+            const isFirstEver = lootStore.junk.length === 0;
+            const item = isFirstEver
+                ? LOOT_TABLE[Math.floor(Math.random() * LOOT_TABLE.length)]
+                : rollLoot();
+            if (item) {
+                lootStore.addJunk(item.id);
+                setLootItem(item);
+                lootScale.value = withDelay(
+                    300,
+                    withSpring(1, { damping: 12, stiffness: 90 }),
+                );
+            }
         }
     }
 
@@ -104,6 +129,60 @@ export default function SessionComplete() {
                 </Animated.View>
 
                 <Spacer size={spacing.lg} />
+
+                {lootItem && (
+                    <Animated.View style={[{ width: "100%" }, lootStyle]}>
+                        <Card
+                            style={{
+                                alignItems: "center",
+                                borderWidth: 1,
+                                borderColor: colors.accent + "40",
+                            }}
+                        >
+                            <Text
+                                style={[
+                                    typography.caption,
+                                    {
+                                        color: colors.accent,
+                                        letterSpacing: 3,
+                                    },
+                                ]}
+                            >
+                                {t("junk.acquired")}
+                            </Text>
+                            <Spacer size={spacing.sm} />
+                            <Text style={{ fontSize: 40 }}>
+                                {lootItem.icon}
+                            </Text>
+                            <Spacer size={spacing.xs} />
+                            <Text
+                                style={[
+                                    typography.caption,
+                                    {
+                                        color: colors.text,
+                                        letterSpacing: 2,
+                                    },
+                                ]}
+                            >
+                                {lootItem.name}
+                            </Text>
+                            <Spacer size={spacing.xs} />
+                            <Text
+                                style={[
+                                    typography.caption,
+                                    {
+                                        color: colors.muted,
+                                        textAlign: "center",
+                                    },
+                                ]}
+                            >
+                                {lootItem.description}
+                            </Text>
+                        </Card>
+                        <Spacer size={spacing.lg} />
+                    </Animated.View>
+                )}
+
                 <Text
                     style={[
                         typography.body,
