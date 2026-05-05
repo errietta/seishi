@@ -5,6 +5,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useStreakStore } from "../lib/store/streakStore";
 import { useShopStore } from "../lib/store/shopStore";
+import { useLootStore } from "../lib/store/lootStore";
 import {
     scheduleDailyReminder,
     cancelDailyReminder,
@@ -15,6 +16,7 @@ import { colors } from "../lib/theme";
 export default function RootLayout() {
     const initialize = useStreakStore((s) => s.initialize);
     const initializeShop = useShopStore((s) => s.initialize);
+    const initializeLoot = useLootStore((s) => s.initialize);
     const initialized = useStreakStore((s) => s.initialized);
     const notificationsEnabled = useStreakStore(
         (s) => s.notificationsEnabled,
@@ -26,6 +28,7 @@ export default function RootLayout() {
     useEffect(() => {
         initialize();
         initializeShop();
+        initializeLoot();
     }, []);
 
     useEffect(() => {
