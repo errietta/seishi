@@ -265,5 +265,11 @@
         "unequip": "UNEQUIP",
         "session": "session complete",
         "notEnough": "not enough coins"
+    },
+    "junk": {
+        "navTitle": "JUNK",
+        "pageTitle": "YOUR JUNK",
+        "acquired": "JUNK ACQUIRED",
+        "collected": "{{count}} / {{total}} collected"
     }
 }

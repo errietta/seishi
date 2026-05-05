@@ -10,6 +10,8 @@ import StreakDisplay from "../components/StreakDisplay";
 import HintModal, { HintTip } from "../components/HintModal";
 import { useStreakStore } from "../lib/store/streakStore";
 import { useShopStore } from "../lib/store/shopStore";
+import { useLootStore } from "../lib/store/lootStore";
+import { LOOT_TABLE } from "../lib/loot/lootTable";
 import { CATALOG } from "../lib/shop/catalog";
 import { colors, spacing, typography } from "../lib/theme";
 
@@ -20,6 +22,9 @@ export default function Home() {
     const history = useStreakStore((s) => s.history);
     const showWelcome = useStreakStore((s) => s.showWelcome);
     const setShowWelcome = useStreakStore((s) => s.setShowWelcome);
+
+    const junkIds = useLootStore((s) => s.junk);
+    const junkCollected = new Set(junkIds).size;
 
     const purchases = useShopStore((s) => s.purchases);
     const activePresenceTheme = useShopStore((s) => s.activePresenceTheme);
@@ -61,6 +66,29 @@ export default function Home() {
                         {balance > 0 && (
                             <Text style={styles.walletLabel}>
                                 🪙 {formatCoins(balance)}
+                            </Text>
+                        )}
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => router.push("/junk")}
+                        style={styles.navButton}
+                    >
+                        <Text
+                            style={[
+                                typography.caption,
+                                { color: colors.muted },
+                            ]}
+                        >
+                            {t("junk.navTitle")}
+                        </Text>
+                        {junkCollected > 0 && (
+                            <Text
+                                style={[
+                                    typography.caption,
+                                    { color: colors.muted, marginTop: 2 },
+                                ]}
+                            >
+                                {junkCollected}/{LOOT_TABLE.length}
                             </Text>
                         )}
                     </TouchableOpacity>
