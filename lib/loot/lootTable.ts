@@ -1065,7 +1065,7 @@ export const LOOT_TABLE: LootItem[] = [
 ];
 
 /** Chance (0–1) that a session awards junk. Easy to tune. */
-export const LOOT_DROP_CHANCE = 0.1;
+export const LOOT_DROP_CHANCE = 0.3;
 
 /** Returns a random item, or null if the roll misses. */
 export function rollLoot(): LootItem | null {
