@@ -25,6 +25,9 @@
     "config": {
         "duration": "DURATION",
         "durationMinutes": "minutes",
+        "durationCustom": "Custom",
+        "durationCustomPlaceholder": "Enter minutes",
+        "durationCustomHint": "Enter a positive whole number of minutes.",
         "range": "SET YOUR RANGE",
         "rangeMin": "minimum",
         "rangeMax": "maximum",
