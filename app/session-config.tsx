@@ -3,6 +3,7 @@ import {
     ScrollView,
     StyleSheet,
     Text,
+    TextInput,
     TouchableOpacity,
     View,
 } from "react-native";
@@ -20,10 +21,14 @@ import {
 import { useStreakStore } from "../lib/store/streakStore";
 import { useShopStore } from "../lib/store/shopStore";
 import { CATALOG } from "../lib/shop/catalog";
+import {
+    getSessionDurationSeconds,
+    SESSION_DURATIONS,
+    type DurationSelection,
+} from "../lib/sessionDuration";
 import { calculateCoins } from "../lib/scoring/scoreCalculator";
 import { colors, radius, spacing, typography } from "../lib/theme";
 
-const DURATIONS = [5, 10, 15, 20];
 const SPICY_MINS = [5, 7, 10, 12];
 const SPICY_MAXS = [10, 15, 20, 30];
 const BASE_SOUNDS = ["none", "rain", "whitenoise", "singingbowl"];
@@ -43,12 +48,21 @@ export default function SessionConfig() {
         ).map((item) => item.soundKey!),
     ];
 
-    const [duration, setDuration] = useState(10);
+    const [duration, setDuration] = useState<DurationSelection>(10);
+    const [customDuration, setCustomDuration] = useState("");
     const [sound, setSound] = useState<string | null>(null);
     const [spicyMin, setSpicyMin] = useState(7);
     const [spicyMax, setSpicyMax] = useState(15);
     const [punishment, setPunishment] = useState<PunishmentMode>("none");
     const [gong, setGong] = useState(true);
+
+    const selectedDurationSeconds = getSessionDurationSeconds(
+        mode as Mode,
+        duration,
+        customDuration,
+    );
+    const isDurationValid =
+        mode === "spicy" || selectedDurationSeconds !== null;
 
     const soundLabel = (key: string) => {
         if (key === "none") return t("config.soundNone");
@@ -60,13 +74,23 @@ export default function SessionConfig() {
     };
 
     function begin() {
-        const finalDuration = devMode
-            ? 5
-            : mode === "spicy"
-              ? (spicyMin +
-                    Math.floor(Math.random() * (spicyMax - spicyMin + 1))) *
-                60
-              : duration * 60;
+        let finalDuration = 5;
+        if (!devMode) {
+            if (mode === "spicy") {
+                finalDuration =
+                    (spicyMin +
+                        Math.floor(Math.random() * (spicyMax - spicyMin + 1))) *
+                    60;
+            } else {
+                const durationSeconds = getSessionDurationSeconds(
+                    mode as Mode,
+                    duration,
+                    customDuration,
+                );
+                if (durationSeconds === null) return;
+                finalDuration = durationSeconds;
+            }
+        }
         console.log({ gong });
         startSession(
             mode as Mode,
@@ -151,7 +175,7 @@ export default function SessionConfig() {
                         </Text>
                         <Spacer size={spacing.md} />
                         <View style={styles.chipRow}>
-                            {DURATIONS.map((d) => (
+                            {SESSION_DURATIONS.map((d) => (
                                 <Chip
                                     key={d}
                                     label={`${d} min`}
@@ -159,7 +183,33 @@ export default function SessionConfig() {
                                     onPress={() => setDuration(d)}
                                 />
                             ))}
+                            <Chip
+                                label={t("config.durationCustom")}
+                                active={duration === "custom"}
+                                onPress={() => setDuration("custom")}
+                            />
                         </View>
+                        {duration === "custom" && (
+                            <>
+                                <Spacer size={spacing.md} />
+                                <TextInput
+                                    accessibilityLabel={t(
+                                        "config.durationCustomPlaceholder",
+                                    )}
+                                    keyboardType="number-pad"
+                                    onChangeText={setCustomDuration}
+                                    placeholder={t(
+                                        "config.durationCustomPlaceholder",
+                                    )}
+                                    placeholderTextColor={colors.muted}
+                                    style={styles.customDurationInput}
+                                    value={customDuration}
+                                />
+                                <Text style={styles.customDurationHint}>
+                                    {t("config.durationCustomHint")}
+                                </Text>
+                            </>
+                        )}
                     </Card>
                 )}
 
@@ -250,6 +300,7 @@ export default function SessionConfig() {
                 <Spacer size={spacing.xl} />
 
                 {(() => {
+                    if (!isDurationValid) return null;
                     const base = {
                         pickups: 0,
                         streakDays: streak,
@@ -257,11 +308,13 @@ export default function SessionConfig() {
                         mode: mode as Mode,
                     };
                     const isSpicy = mode === "spicy";
+                    const durationSeconds = isSpicy
+                        ? spicyMin * 60
+                        : selectedDurationSeconds;
+                    if (durationSeconds === null) return null;
                     const minCoins = calculateCoins({
                         ...base,
-                        durationSeconds: isSpicy
-                            ? spicyMin * 60
-                            : duration * 60,
+                        durationSeconds,
                     });
                     const maxCoins = isSpicy
                         ? calculateCoins({
@@ -288,6 +341,7 @@ export default function SessionConfig() {
                 <Button
                     label={t("config.begin")}
                     onPress={begin}
+                    disabled={!isDurationValid}
                 />
                 <Spacer size={spacing.xl} />
             </ScrollView>
@@ -357,6 +411,20 @@ const styles = StyleSheet.create({
         fontSize: 12,
         letterSpacing: 1,
         color: colors.muted,
+    },
+    customDurationInput: {
+        borderWidth: 1,
+        borderColor: colors.muted,
+        borderRadius: radius.md,
+        color: colors.text,
+        fontSize: 16,
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.sm,
+    },
+    customDurationHint: {
+        color: colors.muted,
+        fontSize: 11,
+        marginTop: spacing.xs,
     },
 
     coinEstimate: {
