@@ -78,6 +78,18 @@ This pushes JS changes instantly without a full rebuild. Press `r` in the termin
 
 ---
 
+## Building a standalone debug APK (Android)
+
+The debug variant bundles the JavaScript app into the APK, so Metro does not need to be running on the device:
+
+```bash
+cd android && ./gradlew :app:assembleDebug
+```
+
+Output: `android/app/build/outputs/apk/debug/app-debug.apk`
+
+---
+
 ## Building for release (Android)
 
 ### Prerequisites
